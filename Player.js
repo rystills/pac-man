@@ -1,4 +1,49 @@
-/*
+/**
+ * if we are overlapping a wall, move back out of if
+ */
+Player.prototype.stayWithinWalls = function() {
+	//update the grid value and grid x and y immediately for use in calculations
+	this.gridX = Math.floor(this.x / gridWidth);
+	this.gridY = Math.floor(this.y / gridHeight);
+	gridVal = grid[this.gridY][this.gridX];
+	
+	if (!(this.direction%2)) {
+		//going horizontally
+		if ((this.direction == 0 && (this.x - this.gridX*gridWidth >= gridWidth/2)) ||
+		(this.direction == 2 && (this.x - this.gridX*gridWidth <= gridWidth/2))) {
+			this.checkMoveOutsideWall();
+		}
+	}
+	else {
+		//goingVertically
+		if ((this.direction == 3 && (this.y - this.gridY*gridHeight >= gridHeight/2)) ||
+		(this.direction == 1 && (this.y - this.gridY*gridHeight <= gridHeight/2))) {
+			this.checkMoveOutsideWall();
+		}
+	}
+}
+
+/**
+ * sub-method of stayWithinWalls; check for a wall collision
+ */
+Player.prototype.checkMoveOutsideWall = function() {
+	gridY2 = this.gridY;
+	gridX2 = this.gridX;
+	if (!(this.direction % 2)) {
+		gridX2 -= Math.sign(this.direction-1);
+	}
+	else {
+		gridY2 += Math.sign(this.direction-2);
+	}
+	if (grid[gridY2][gridX2] == 0) {
+		console.log(this.gridX + ", " + this.gridY + " | " + gridX2 + ", " + gridY2);
+		//we are moving into a wall, so back out to the center of this grid space
+		this.x = this.gridX*gridWidth + gridWidth/2;
+		this.y = this.gridY*gridHeight + gridHeight/2;
+	}
+}
+
+/**
  * update the Player object
  */
 Player.prototype.update = function() {
@@ -32,6 +77,8 @@ Player.prototype.update = function() {
 		this.y += Math.sign(this.direction - 2) * deltaTime * this.speed;
 	}
 	
+	this.stayWithinWalls();
+	
 	//check if we can resolve a discrepancy between the desired direction and the actual direction
 	if (this.wantDirection != this.direction) {
 		//update the grid value and grid x and y immediately for use in calculations
@@ -44,8 +91,8 @@ Player.prototype.update = function() {
 			//if we crossed over the center of a gridspace, we can initiate a direction change
 			if (!(this.direction%2)) {
 				//want to go from horizontal to vertical
-				if (((this.x - this.gridX*gridWidth >= gridWidth/2) && (this.xPrev - this.gridX*gridWidth <= gridWidth/2)) ||
-				((this.x - this.gridX*gridWidth <= gridWidth/2) && (this.xPrev - this.gridX*gridWidth >= gridWidth/2))) {
+				if ((this.x == this.xPrev) || (((this.x - this.gridX*gridWidth >= gridWidth/2) && (this.xPrev - this.gridX*gridWidth <= gridWidth/2)) ||
+				((this.x - this.gridX*gridWidth <= gridWidth/2) && (this.xPrev - this.gridX*gridWidth >= gridWidth/2)))) {
 					//move to the center of the gridSpace, and change direction
 					this.x -= (this.x - this.gridX*gridWidth - gridWidth/2);
 					this.direction = this.wantDirection;
@@ -53,8 +100,8 @@ Player.prototype.update = function() {
 			}
 			else {
 				//want to go from vertical to horizontal
-				if (((this.y - this.gridY*gridHeight >= gridHeight/2) && (this.yPrev - this.gridY*gridHeight <= gridHeight/2)) ||
-				((this.y - this.gridY*gridHeight <= gridHeight/2) && (this.yPrev - this.gridY*gridHeight >= gridHeight/2))) {
+				if ((this.y == this.yPrev) || (((this.y - this.gridY*gridHeight >= gridHeight/2) && (this.yPrev - this.gridY*gridHeight <= gridHeight/2)) ||
+				((this.y - this.gridY*gridHeight <= gridHeight/2) && (this.yPrev - this.gridY*gridHeight >= gridHeight/2)))) {
 					//move to the center of the gridSpace, and change direction
 					this.y -= (this.y - this.gridY*gridHeight - gridHeight/2);
 					this.direction = this.wantDirection;
