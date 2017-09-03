@@ -44,6 +44,12 @@ function update() {
 			}
 		}
 	}
+	
+	//draw the pellets
+	context.fillStyle="#00FF00";
+	for (var i = 0; i < pellets.length; ++i) {
+		context.fillRect(pellets[i].x - pellets[i].width/2, pellets[i].y - pellets[i].height/2,pellets[i].width,pellets[i].height);
+	}
 
 	//draw a circle to represent the player
 	context.fillStyle = "#FFFF00";
@@ -62,6 +68,20 @@ function updateTime() {
 	//divide by 1,000 to get deltaTime in milliseconds
     deltaTime = (curTime - prevTime) / 1000;
     prevTime = curTime;
+}
+
+/**
+ * populate the list of pellets corresponding to the level file
+ */
+function createPellets() {
+	pellets = [];
+	for (var i = 0; i < grid.length; ++i) {
+		for (var r = 0; r < grid[i].length; ++r) {
+			if (scripts["levels.js"]["pellets1"][i][r] == 1) {
+				pellets.push(new Pellet(gridWidth * r + gridWidth/2, gridHeight * i + gridHeight/2));
+			}
+		}
+	}
 }
 
 /**
@@ -84,6 +104,7 @@ function startGame() {
 	
 	//instantiate global game objects
 	player = new Player();
+	createPellets();
 	
 	//set the game to call the 'update' method on each tick
 	_intervalId = setInterval(update, 1000 / fps); //set refresh rate to desired fps
@@ -94,7 +115,7 @@ function startGame() {
  */
 function loadAssets() {	
 	//global list of script assets and current script number
-	scriptFiles = ["levels.js","Player.js"];
+	scriptFiles = ["levels.js","Player.js","Pellet.js"];
 	scriptNum = 0;
 	
 	//global list of script contents
