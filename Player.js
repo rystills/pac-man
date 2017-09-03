@@ -136,6 +136,19 @@ Player.prototype.move = function() {
 }
 
 /**
+ * check if we are colliding with a pellet and should eat it
+ */
+Player.prototype.checkEatPellet = function() {
+	for (var i = 0; i < pellets.length; ++i) {
+		if (collisionCheck(this,pellets[i])) {
+			pellets.splice(i,1);
+			--i
+			console.log("om nom nom")
+		}
+	}
+}
+
+/**
  * update the Player object
  */
 Player.prototype.update = function() {
@@ -146,6 +159,8 @@ Player.prototype.update = function() {
 	this.stayWithinWalls();
 	
 	this.tryTakeWantDirection();
+	
+	this.checkEatPellet();
 	
 	//update our position on the grid based on our exact position
 	this.gridX = Math.floor(this.x / gridWidth);
