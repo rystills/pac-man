@@ -60,6 +60,18 @@ function update() {
 	context.arc(player.x, player.y, radius, 0, 2 * Math.PI, false);
 	context.fill();
 	context.stroke();
+	
+	//draw the HUD
+	HUDContext.font = "30px Arial";
+	HUDContext.fillStyle = "#FFFFFF";
+	
+	//left-pad the score with 0's 
+	scoreString = score.toString();
+	var scoreLen = scoreString.length;
+	while (++scoreLen < 6) {
+		scoreString = "0" + scoreString;
+	}
+	HUDContext.fillText("Score: "  + scoreString,10,35);
 }
 
 /**
@@ -93,27 +105,6 @@ function createPellets() {
  * @returns whether there is a collision between the objects (true) or not (false)
  */
 function collisionCheck(a,b) {
-	/*console.log(a.x + ", " + b.x + " | " + b.x + ", " + b.y)
-	left1 = a.x - (a.width/2);
-	right1 = a.x + (a.width/2);
-	top1 = a.y - (a.height/2);
-	bottom1 = a.y + (a.height/2);
-	
-	left2 = b.x - (b.width/2);
-	right2 = b.x + (b.width/2);
-	top2 = b.y - (b.height/2);
-	bottom2 = b.y + (b.height/2);
-	
-	/*return (left1 < right2 &&
-			   right1 > left2 &&
-			   top1 < bot2 &&
-			   bot1 > top2);
-	return ((Math.abs(a.x - b.x) * 2 < (a.width + b.width)) &&
-    (Math.abs(a.y - b.y) * 2 < (a.height + b.height)));
-	return !(left2 > right1
-	        || right2 < left1
-	        || top2 > bottom1
-	        || bottom2 < top1);*/
 	return (Math.abs(a.x - b.x) * 2 < (a.width + b.width)) &&
     (Math.abs(a.y - b.y) * 2 < (a.height + b.height));
 }

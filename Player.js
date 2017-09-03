@@ -142,8 +142,8 @@ Player.prototype.checkEatPellet = function() {
 	for (var i = 0; i < pellets.length; ++i) {
 		if (collisionCheck(this,pellets[i])) {
 			pellets.splice(i,1);
-			--i
-			console.log("om nom nom")
+			--i;
+			score+=100;
 		}
 	}
 }
