@@ -1,3 +1,9 @@
+/* 0 = wall
+ * 1 = horizontal floor
+ * 2 = vertical floor
+ * 3 = multi-directional floor 
+ */
+
 object = {
 "level1": [
 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
