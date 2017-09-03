@@ -36,11 +36,31 @@ Player.prototype.checkMoveOutsideWall = function() {
 		gridY2 += Math.sign(this.direction-2);
 	}
 	if (grid[gridY2][gridX2] == 0) {
-		console.log(this.gridX + ", " + this.gridY + " | " + gridX2 + ", " + gridY2);
 		//we are moving into a wall, so back out to the center of this grid space
 		this.x = this.gridX*gridWidth + gridWidth/2;
 		this.y = this.gridY*gridHeight + gridHeight/2;
 	}
+}
+
+/**
+ * check if the wantDirection will lead up to an open space, or to a wall
+ */
+Player.prototype.checkDirectionIsLegal = function() {
+	gridY2 = this.gridY;
+	gridX2 = this.gridX;
+	if (!(this.wantDirection % 2)) {
+		gridX2 -= Math.sign(this.wantDirection-1);
+	}
+	else {
+		gridY2 += Math.sign(this.wantDirection-2);
+	}
+	if (grid[gridY2][gridX2] != 0) {
+		console.log(this.gridX + ", " + this.gridY + " | " + gridX2 + ", " + gridY2);
+		console.log(this.wantDirection);
+		this.direction = this.wantDirection;
+		return true;
+	}
+	return false;
 }
 
 /**
@@ -54,14 +74,10 @@ Player.prototype.update = function() {
 			//before setting the direction, check if our current grid space allows that movement
 			if (gridVal == 3 || gridVal == (i % 2 ? 2 : 1)) {
 				//movement is allowed, now check if we are trying to change between x and y movement
+				this.wantDirection = i;
 				if (i%2 == this.direction%2) {
 					//we are not changing between x and y movement
-					this.direction = i;
-					this.wantDirection = i;
-				}
-				else {
-					//we are changing between x and y movement, so set the desired flag
-					this.wantDirection = i;
+					this.checkDirectionIsLegal();
 				}
 			}
 		}
@@ -94,8 +110,9 @@ Player.prototype.update = function() {
 				if ((this.x == this.xPrev) || (((this.x - this.gridX*gridWidth >= gridWidth/2) && (this.xPrev - this.gridX*gridWidth <= gridWidth/2)) ||
 				((this.x - this.gridX*gridWidth <= gridWidth/2) && (this.xPrev - this.gridX*gridWidth >= gridWidth/2)))) {
 					//move to the center of the gridSpace, and change direction
-					this.x -= (this.x - this.gridX*gridWidth - gridWidth/2);
-					this.direction = this.wantDirection;
+					if (this.checkDirectionIsLegal()) {
+						this.x -= (this.x - this.gridX*gridWidth - gridWidth/2);
+					}
 				}
 			}
 			else {
@@ -103,8 +120,9 @@ Player.prototype.update = function() {
 				if ((this.y == this.yPrev) || (((this.y - this.gridY*gridHeight >= gridHeight/2) && (this.yPrev - this.gridY*gridHeight <= gridHeight/2)) ||
 				((this.y - this.gridY*gridHeight <= gridHeight/2) && (this.yPrev - this.gridY*gridHeight >= gridHeight/2)))) {
 					//move to the center of the gridSpace, and change direction
-					this.y -= (this.y - this.gridY*gridHeight - gridHeight/2);
-					this.direction = this.wantDirection;
+					if (this.checkDirectionIsLegal()) {
+						this.y -= (this.y - this.gridY*gridHeight - gridHeight/2);
+					}
 				}
 			}
 		}

@@ -48,7 +48,6 @@ function update() {
 	//draw a circle to represent the player
 	context.fillStyle = "#FFFF00";
 	var radius = player.width/2;
-	console.log(player.gridX + ", " + player.gridY);
 	context.beginPath();
 	context.arc(player.x, player.y, radius, 0, 2 * Math.PI, false);
 	context.fill();
