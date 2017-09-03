@@ -53,13 +53,26 @@ function update() {
 		context.fillRect(pellets[i].x - pellets[i].width/2, pellets[i].y - pellets[i].height/2,pellets[i].width,pellets[i].height);
 	}
 
-	//draw a circle to represent the player
-	context.fillStyle = "#FFFF00";
+	//draw the player
+	context.fillStyle = "#000000";
 	var radius = player.width/2;
+	var rot = Math.PI/2 * player.direction;
+	//first half of body
 	context.beginPath();
-	context.arc(player.x, player.y, radius, 0, 2 * Math.PI, false);
+	context.arc(player.x, player.y, radius, -rot + 0.25 * Math.PI, -rot + 1.25 * Math.PI, false);
+	context.fillStyle = "rgb(255, 255, 0)";
 	context.fill();
-	context.stroke();
+	
+	//second half of body
+	context.beginPath();
+	context.arc(player.x, player.y, radius, -rot + 0.75 * Math.PI, -rot + 1.75 * Math.PI, false);
+	context.fill();
+	
+	//eye
+	context.beginPath();
+	context.arc(player.x - (player.direction % 2 ? radius*.5 : 0), player.y - (player.direction % 2 ? 0 : radius*.5), radius*.1, 0, 2 * Math.PI, false);
+	context.fillStyle = "rgb(0, 0, 0)";
+	context.fill();
 	
 	//draw the HUD
 	HUDContext.font = "30px Arial";
@@ -110,7 +123,7 @@ function collisionCheck(a,b) {
 }
 
 /**
- * sets the fps and begins the main update loop; the be called after resource loading
+ * sets the fps and begins the main update loop; to be called after resource loading
  */
 function startGame() {
 	//keep a global fps flag for game-speed (although all speeds should use deltaTime)

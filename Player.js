@@ -15,7 +15,7 @@ Player.prototype.stayWithinWalls = function() {
 		}
 	}
 	else {
-		//goingVertically
+		//going vertically
 		if ((this.direction == 3 && (this.y - this.gridY*gridHeight >= gridHeight/2)) ||
 		(this.direction == 1 && (this.y - this.gridY*gridHeight <= gridHeight/2))) {
 			this.checkMoveOutsideWall();
