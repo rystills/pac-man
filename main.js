@@ -29,6 +29,7 @@ function updateTime() {
  * sets the fps and begins the main update loop; the be called after resource loading
  */
 function startGame() {
+	console.log(scripts["levels.js"])
 	//keep a global fps flag for game-speed (although all speeds should use deltaTime)
 	fps = 60;
 	
@@ -43,28 +44,43 @@ function startGame() {
 /**
  * loads all the needed files, then calls startGame to begin the game
  */
-function loadAssets() {
-	//get a reference to the document body, so we can append scripts to it
-	var docBody = document.getElementsByTagName('body')[0];
+function loadAssets() {	
+	//global list of script assets and current script number
+	scriptFiles = ["levels.js"];
+	scriptNum = 0;
 	
-	//global list of script assets to load
-	var scripts = ["grid.txt"];
-	loadAsset(scripts,0);
+	//global list of script contents
+	scripts = {}
+	
+	//quick and dirty way to store local text files as JS objects
+	object = null;
+	
+	loadAsset(scriptFiles,0);
 }
 
 /**
  * load a single asset, setting onload to move on to the next asset
- * @param scripts: the list of script assets to load from
- * @param curNum: the index of the script to laod
  */
-function loadAsset(scripts,curNum) {
-	if (curNum >= scripts.length) {
+function loadAsset() {
+	//if the global object var contains a string, append it to the global scripts list
+	if (object != null) {
+		scripts[scriptFiles[scriptNum-1]] = object;
+		object = null;
+	}
+	//once we've loaded all the objects, we are ready to start the game
+	if (scriptNum >= scriptFiles.length) {
 		return startGame();
 	}
+	
+	//load the desired script file
 	var elem = document.createElement('script');
 	elem.type = 'text/javascript';
-	elem.src = scripts[curNum]
-	elem.onload = loadAsset(scripts,curNum+1);
+	elem.onload = loadAsset;
+	elem.src = scriptFiles[scriptNum];
+	
+	//add the new script to the body and increment the script count
+	document.body.appendChild(elem);
+	++scriptNum;
 }
 
 loadAssets();
