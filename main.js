@@ -17,20 +17,33 @@ function setupKeyListeners() {
  * clear the entire screen to black, preparing it for a fresh render
  */
 function clearScreen() {
-	var c=document.getElementById("canvas");
-	var ctx=c.getContext("2d");
-	ctx.fillStyle="#000000";
-	ctx.fillRect(0,0,ctx.canvas.width,ctx.canvas.height);
+	context.fillStyle="#000000";
+	context.fillRect(0,0,canvas.width,canvas.height);
 }
 
 /**
- * main game loop; update all aspects of the game in order
+ * main game loop; update all aspects of the game in-order
  */
 function update() {
+	//update the deltaTime
 	updateTime();
+	
+	//update all game objects
 	player.update();
-	console.log(player.direction);
+	
+	//clear and re-render the screen
 	clearScreen();
+	
+	//draw each grid piece from the level file
+	context.fillStyle="#FFFFFF";
+	for (var i = 0; i < grid.length; ++i) {
+		for (var r = 0; r < grid[i].length; ++r) {
+			//draw walls
+			if (grid[i][r] == 0) {
+				context.fillRect(r*gridWidth,i*gridHeight,gridWidth,gridHeight);
+			}
+		}
+	}
 }
 
 /**
@@ -53,6 +66,13 @@ function startGame() {
 	//init global time vars for delta time calculation
 	prevTime = Date.now();
 	deltaTime = 0;
+	
+	//init global game vars
+	canvas = document.getElementById("canvas");
+	context = canvas.getContext("2d");
+	grid = scripts["levels.js"]["level1"];
+	gridWidth = canvas.width / grid[0].length;
+	gridHeight = canvas.height / grid.length;
 	
 	//instantiate global game objects
 	player = new Player();
