@@ -55,8 +55,6 @@ Player.prototype.checkDirectionIsLegal = function() {
 		gridY2 += Math.sign(this.wantDirection-2);
 	}
 	if (grid[gridY2][gridX2] != 0) {
-		console.log(this.gridX + ", " + this.gridY + " | " + gridX2 + ", " + gridY2);
-		console.log(this.wantDirection);
 		this.direction = this.wantDirection;
 		return true;
 	}
@@ -64,37 +62,9 @@ Player.prototype.checkDirectionIsLegal = function() {
 }
 
 /**
- * update the Player object
+ * attempt to switch to the wantDirection
  */
-Player.prototype.update = function() {
-	//poll for input to see if the player direction should change
-	gridVal = grid[this.gridY][this.gridX];
-	for (var i = 0; i < this.moveKeys.length; ++i) {
-		if (keyStates[this.moveKeys[i]]) {
-			//before setting the direction, check if our current grid space allows that movement
-			if (gridVal == 3 || gridVal == (i % 2 ? 2 : 1)) {
-				//movement is allowed, now check if we are trying to change between x and y movement
-				this.wantDirection = i;
-				if (i%2 == this.direction%2) {
-					//we are not changing between x and y movement
-					this.checkDirectionIsLegal();
-				}
-			}
-		}
-	}
-	
-	//move the player based on their current direction
-	if (!(this.direction % 2)) {
-		//horizontal movement
-		this.x -= Math.sign(this.direction-1) * deltaTime * this.speed;
-	}
-	else {
-		//vertical movement
-		this.y += Math.sign(this.direction - 2) * deltaTime * this.speed;
-	}
-	
-	this.stayWithinWalls();
-	
+Player.prototype.tryTakeWantDirection = function() {
 	//check if we can resolve a discrepancy between the desired direction and the actual direction
 	if (this.wantDirection != this.direction) {
 		//update the grid value and grid x and y immediately for use in calculations
@@ -127,6 +97,55 @@ Player.prototype.update = function() {
 			}
 		}
 	}
+}
+
+/**
+ * grab directional input from the keyboard and try to update direction accordingly 
+ */
+Player.prototype.checkDirectionalInput = function() {
+	//poll for input to see if the player direction should change
+	gridVal = grid[this.gridY][this.gridX];
+	for (var i = 0; i < this.moveKeys.length; ++i) {
+		if (keyStates[this.moveKeys[i]]) {
+			//before setting the direction, check if our current grid space allows that movement
+			if (gridVal == 3 || gridVal == (i % 2 ? 2 : 1)) {
+				//movement is allowed, now check if we are trying to change between x and y movement
+				this.wantDirection = i;
+				if (i%2 == this.direction%2) {
+					//we are not changing between x and y movement
+					this.direction = this.wantDirection;
+				}
+			}
+		}
+	}
+}
+
+/**
+ * move the player forward
+ */
+Player.prototype.move = function() {
+	//move the player based on their current direction
+	if (!(this.direction % 2)) {
+		//horizontal movement
+		this.x -= Math.sign(this.direction-1) * deltaTime * this.speed;
+	}
+	else {
+		//vertical movement
+		this.y += Math.sign(this.direction - 2) * deltaTime * this.speed;
+	}
+}
+
+/**
+ * update the Player object
+ */
+Player.prototype.update = function() {
+	this.checkDirectionalInput();
+	
+	this.move();
+	
+	this.stayWithinWalls();
+	
+	this.tryTakeWantDirection();
 	
 	//update our position on the grid based on our exact position
 	this.gridX = Math.floor(this.x / gridWidth);
