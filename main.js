@@ -51,6 +51,13 @@ function update() {
 		ghosts[i].update();
 	}
 	
+	render();
+}
+
+/**
+ * render all objects and HUD items
+ */
+function render() {
 	//clear and re-render the screen
 	clearScreen();
 	
@@ -148,7 +155,24 @@ function update() {
 		bestScoreString = "0" + bestScoreString;
 	}
 	HUDContext.fillText("Best: "  + bestScoreString,390,35);
+	
+	//dim the screen and show game over text if the game is not active
+	if (!gameActive) {
+		//dim screen with semi-transparent black rectangle
+		context.fillStyle = "rgba(0,0,0,.5)";
+		context.fillRect(0,0,canvas.width,canvas.height);
 
+		//show game-over text
+		context.fillStyle = "rgba(255,255,255,1)";
+		
+		//figure out the dimensions of the string so that we can properly center it
+		var startInstructions = "Press Enter to Play";
+		context.font = "46px Arial";
+	    textWidth = context.measureText(startInstructions).width;
+	    //height is roughly equivalent to the text size
+	    textHeight = 46;
+		context.fillText(startInstructions,canvas.width/2 - textWidth/2,canvas.height/2 - textHeight/2);
+	}
 }
 
 /**
