@@ -37,11 +37,31 @@ function drawTriangle(x1,y1,x2,y2,x3,y3) {
 }
 
 /**
+ * check if the user has pressed space to begin the game
+ */
+function checkStartGame() {
+	if (keyStates[" "]) {
+		//reset game vares for a fresh run
+		gameActive = true;
+		score = 0;
+		pellets = []
+		createPellets();
+		
+		//add an extra life and subtract it to reset player and ghost positions
+		lives = 4;
+		subtractLife();
+	}
+	
+}
+
+/**
  * main game loop; update all aspects of the game in-order
  */
 function update() {
 	//update the deltaTime
 	updateTime();
+	
+	checkStartGame();
 	
 	//update all game objects
 	if (gameActive) {
@@ -166,7 +186,7 @@ function render() {
 		context.fillStyle = "rgba(255,255,255,1)";
 		
 		//figure out the dimensions of the string so that we can properly center it
-		var startInstructions = "Press Enter to Play";
+		var startInstructions = "Press Space to Play";
 		context.font = "46px Arial";
 	    textWidth = context.measureText(startInstructions).width;
 	    //height is roughly equivalent to the text size
@@ -272,10 +292,10 @@ function startGame() {
 	grid = scripts["levels.js"]["level1"];
 	gridWidth = canvas.width / grid[0].length;
 	gridHeight = canvas.height / grid.length;
-	score = 0;
 	bestScore = 0;
+	score = 0;
 	lives = 3;
-	gameActive = true;
+	gameActive = false;
 	
 	//instantiate global game objects
 	player = new Player();
