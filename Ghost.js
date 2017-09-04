@@ -40,7 +40,6 @@ Ghost.prototype.checkDirectionIsLegal = function(wantDirection) {
 		gridY2 += Math.sign(wantDirection-2);
 	}
 	if (grid[gridY2][gridX2] != 0) {
-		this.direction = wantDirection;
 		return true;
 	}
 	return false;
@@ -52,7 +51,7 @@ Ghost.prototype.checkDirectionIsLegal = function(wantDirection) {
 Ghost.prototype.chooseNewDirection = function() {
 	//first calculate a list of directions we can move in 
 	var legalDirections = [];
-	for (var i = 0; i < 3; ++i) {
+	for (var i = 0; i < 4; ++i) {
 		if (this.checkDirectionIsLegal(i)) {
 			legalDirections.push(i);
 		}
@@ -99,7 +98,16 @@ Ghost.prototype.update = function() {
 	this.move();	
 	//check if we are at an intersection, and if so, attempt to choose a new direction
 	if (grid[this.gridY][this.gridX] == 3) {
-		this.changingDirection = true;
+		//update the grid x and y immediately for use in calculations
+		this.gridX = Math.floor(this.x / gridWidth);
+		this.gridY = Math.floor(this.y / gridHeight);
+		
+		//don't allow changing direction if we just changed direction on this intersection
+		if (!(this.changeGridX == this.gridX && this.changeGridY == this.gridY)) {
+			this.changingDirection = true;
+			this.changeGridX = this.gridX;
+			this.changeGridY = this.gridY;
+		}
 	}
 	else {
 		this.changingDirection = false;
@@ -127,4 +135,6 @@ function Ghost(gridX,gridY,color,direction) {
 	this.speed = 85;
 	this.direction = direction;
 	this.changingDirection = false;
+	this.changeGridX = 0;
+	this.changeGridY = 0;
 }
