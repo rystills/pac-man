@@ -118,8 +118,9 @@ function update() {
 		
 	//draw the HUD
 	HUDContext.font = "30px Arial";
-	HUDContext.fillStyle = "#FFFFFF";
 	
+	//draw the score
+	HUDContext.fillStyle = "#FFFFFF";
 	//left-pad the score with 0's 
 	scoreString = score.toString();
 	var scoreLen = scoreString.length;
@@ -130,13 +131,24 @@ function update() {
 	
 	//draw each life as a yellow circle
 	HUDContext.fillStyle = "rgb(255, 255, 0)";
-	var posX = 300;
+	var posX = 250;
 	var posY = 25;
 	for (var i = 0; i < lives; ++i) {
 		HUDContext.beginPath();
 		HUDContext.arc(posX + 40*i,posY, player.width/2, 0, 2 * Math.PI, false);
 		HUDContext.fill();
 	}
+	
+	//draw the best score
+	HUDContext.fillStyle = "#FFFFFF";
+	//left-pad the best score with 0's 
+	bestScoreString = bestScore.toString();
+	var bestScoreLen = bestScoreString.length;
+	while (++bestScoreLen < 6) {
+		bestScoreString = "0" + bestScoreString;
+	}
+	HUDContext.fillText("Best: "  + bestScoreString,390,35);
+
 }
 
 /**
@@ -146,6 +158,9 @@ function subtractLife() {
 	if (--lives == 0) {
 		//game is over; no need to reset ghost or player positions
 		gameActive = false;
+		if (score > bestScore) {
+			bestScore = score;
+		}
 	}
 	else {
 		//reset player and ghost positions
@@ -234,6 +249,7 @@ function startGame() {
 	gridWidth = canvas.width / grid[0].length;
 	gridHeight = canvas.height / grid.length;
 	score = 0;
+	bestScore = 0;
 	lives = 3;
 	gameActive = true;
 	
