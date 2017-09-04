@@ -126,6 +126,7 @@ Ghost.prototype.returnToStart = function() {
 	this.x = this.startX;
 	this.y = this.startY;
 	this.direction = this.startDirection;
+	this.changingDirection = false;
 }
 
 /**
