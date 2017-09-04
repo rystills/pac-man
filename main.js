@@ -45,6 +45,9 @@ function update() {
 	
 	//update all game objects
 	player.update();
+	for (var i = 0; i < ghosts.length; ++i) {
+		ghosts[i].update();
+	}
 	
 	//clear and re-render the screen
 	clearScreen();
@@ -58,6 +61,12 @@ function update() {
 				context.fillRect(r*gridWidth,i*gridHeight,gridWidth,gridHeight);
 			}
 		}
+	}
+		
+	//draw the pellets
+	context.fillStyle="#00FF00";
+	for (var i = 0; i < pellets.length; ++i) {
+		context.fillRect(pellets[i].x - pellets[i].width/2, pellets[i].y - pellets[i].height/2,pellets[i].width,pellets[i].height);
 	}
 	
 	//draw the ghosts
@@ -81,12 +90,6 @@ function update() {
 			drawTriangle(leftX,topY,rightX,topY,leftX + (rightX-leftX)/2,botY);
 		}
 		
-	}
-		
-	//draw the pellets
-	context.fillStyle="#00FF00";
-	for (var i = 0; i < pellets.length; ++i) {
-		context.fillRect(pellets[i].x - pellets[i].width/2, pellets[i].y - pellets[i].height/2,pellets[i].width,pellets[i].height);
 	}
 
 	//draw the player
@@ -137,10 +140,10 @@ function updateTime() {
  */
 function createGhosts() {
 	ghosts = [];
-	ghosts.push(new Ghost(200,400,"#ffee35"));
-	ghosts.push(new Ghost(300,400,"#3dceff"));
-	ghosts.push(new Ghost(400,400,"#c9adff"));
-	ghosts.push(new Ghost(500,400,"#e20047"));
+	ghosts.push(new Ghost(10,14,"#ffee35",2));
+	ghosts.push(new Ghost(12,14,"#3dceff",2));
+	ghosts.push(new Ghost(15,14,"#c9adff",0));
+	ghosts.push(new Ghost(17,14,"#e20047",0));
 }
 
 /**

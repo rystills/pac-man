@@ -136,6 +136,19 @@ Player.prototype.move = function() {
 }
 
 /**
+ * update the player's grid and previous locations to match our new final x,y pos
+ */
+Player.prototype.updatePositionalVars = function() {
+	//update our position on the grid based on our exact position
+	this.gridX = Math.floor(this.x / gridWidth);
+	this.gridY = Math.floor(this.y / gridHeight);
+	
+	//update our previous position vars to our new position
+	this.xPrev = this.x;
+	this.yPrev = this.y;
+}
+
+/**
  * check if we are colliding with a pellet and should eat it
  */
 Player.prototype.checkEatPellet = function() {
@@ -162,13 +175,7 @@ Player.prototype.update = function() {
 	
 	this.checkEatPellet();
 	
-	//update our position on the grid based on our exact position
-	this.gridX = Math.floor(this.x / gridWidth);
-	this.gridY = Math.floor(this.y / gridHeight);
-	
-	//update our previous position vars to our new position
-	this.xPrev = this.x;
-	this.yPrev = this.y;
+	this.updatePositionalVars();
 }
 
 /**
