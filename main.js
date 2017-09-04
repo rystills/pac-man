@@ -44,7 +44,9 @@ function update() {
 	updateTime();
 	
 	//update all game objects
-	player.update();
+	if (gameActive) {
+		player.update();	
+	}
 	for (var i = 0; i < ghosts.length; ++i) {
 		ghosts[i].update();
 	}
@@ -92,26 +94,28 @@ function update() {
 		
 	}
 
-	//draw the player
-	context.fillStyle = "#000000";
-	var radius = player.width/2;
-	var rot = Math.PI/2 * player.direction;
-	//first half of body
-	context.beginPath();
-	context.arc(player.x, player.y, radius, -rot + 0.25 * Math.PI, -rot + 1.25 * Math.PI, false);
-	context.fillStyle = "rgb(255, 255, 0)";
-	context.fill();
-	//second half of body
-	context.beginPath();
-	context.arc(player.x, player.y, radius, -rot + 0.75 * Math.PI, -rot + 1.75 * Math.PI, false);
-	context.fill();
-	//eye
-	context.beginPath();
-	context.arc(player.x - (player.direction % 2 ? radius*.5 : 0), 
-			player.y - (player.direction % 2 ? 0 : radius*.5), radius*.1, 0, 2 * Math.PI, false);
-	context.fillStyle = "rgb(0, 0, 0)";
-	context.fill();
-	
+	//draw the player, only if the game is active
+	if (gameActive) {
+		context.fillStyle = "#000000";
+		var radius = player.width/2;
+		var rot = Math.PI/2 * player.direction;
+		//first half of body
+		context.beginPath();
+		context.arc(player.x, player.y, radius, -rot + 0.25 * Math.PI, -rot + 1.25 * Math.PI, false);
+		context.fillStyle = "rgb(255, 255, 0)";
+		context.fill();
+		//second half of body
+		context.beginPath();
+		context.arc(player.x, player.y, radius, -rot + 0.75 * Math.PI, -rot + 1.75 * Math.PI, false);
+		context.fill();
+		//eye
+		context.beginPath();
+		context.arc(player.x - (player.direction % 2 ? radius*.5 : 0), 
+				player.y - (player.direction % 2 ? 0 : radius*.5), radius*.1, 0, 2 * Math.PI, false);
+		context.fillStyle = "rgb(0, 0, 0)";
+		context.fill();
+	}
+		
 	//draw the HUD
 	HUDContext.font = "30px Arial";
 	HUDContext.fillStyle = "#FFFFFF";
@@ -123,6 +127,33 @@ function update() {
 		scoreString = "0" + scoreString;
 	}
 	HUDContext.fillText("Score: "  + scoreString,10,35);
+	
+	//draw each life as a yellow circle
+	HUDContext.fillStyle = "rgb(255, 255, 0)";
+	var posX = 300;
+	var posY = 25;
+	for (var i = 0; i < lives; ++i) {
+		HUDContext.beginPath();
+		HUDContext.arc(posX + 40*i,posY, player.width/2, 0, 2 * Math.PI, false);
+		HUDContext.fill();
+	}
+}
+
+/**
+ * remove a life from the player, ending the game if lives have reached 0
+ */
+function subtractLife() {
+	if (--lives == 0) {
+		//game is over; no need to reset ghost or player positions
+		gameActive = false;
+	}
+	else {
+		//reset player and ghost positions
+		player.returnToStart();
+		for (var i = 0; i < ghosts.length; ++i) {
+			ghosts[i].returnToStart();
+		}
+	}
 }
 
 /**
@@ -203,6 +234,8 @@ function startGame() {
 	gridWidth = canvas.width / grid[0].length;
 	gridHeight = canvas.height / grid.length;
 	score = 0;
+	lives = 3;
+	gameActive = true;
 	
 	//instantiate global game objects
 	player = new Player();

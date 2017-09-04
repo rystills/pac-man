@@ -162,6 +162,17 @@ Player.prototype.checkEatPellet = function() {
 }
 
 /**
+ * if the player is colliding with a ghost, subtract a life and reset
+ */
+Player.prototype.checkHitGhost = function() {
+	for (var i = 0; i < ghosts.length; ++i) {
+		if (collisionCheck(this,ghosts[i])) {
+			subtractLife();
+		}
+	}
+}
+
+/**
  * update the Player object
  */
 Player.prototype.update = function() {
@@ -176,6 +187,17 @@ Player.prototype.update = function() {
 	this.checkEatPellet();
 	
 	this.updatePositionalVars();
+	
+	this.checkHitGhost();
+}
+
+/**
+ * return the player back to their initial position and direction
+ */
+Player.prototype.returnToStart = function() {
+	this.x = this.startX;
+	this.y = this.startY;
+	this.direction = this.startDirection;
 }
 
 /**
@@ -195,5 +217,10 @@ function Player() {
 	//directions go counterclockwise from 0 (right) to 3 (down)
 	this.direction = 2;
 	this.wantDirection = 2;
-	this.moveKeys = ["D","W","A","S"]
+	this.moveKeys = ["D","W","A","S"];
+	
+	//keep track of initial position and direction for restarting
+	this.startX = this.x;
+	this.startY = this.y;
+	this.startDirection = this.direction;
 }

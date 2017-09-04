@@ -120,6 +120,15 @@ Ghost.prototype.update = function() {
 } 
 
 /**
+ * return the ghost back to its initial position and direction
+ */
+Ghost.prototype.returnToStart = function() {
+	this.x = this.startX;
+	this.y = this.startY;
+	this.direction = this.startDirection;
+}
+
+/**
  * Enemy class which roams the grid in search of pac-man
  */
 function Ghost(gridX,gridY,color,direction) {
@@ -137,4 +146,9 @@ function Ghost(gridX,gridY,color,direction) {
 	this.changingDirection = false;
 	this.changeGridX = 0;
 	this.changeGridY = 0;
+	
+	//keep track of initial position and direction for restarting
+	this.startX = this.x;
+	this.startY = this.y;
+	this.startDirection = this.direction;
 }
