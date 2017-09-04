@@ -136,6 +136,18 @@ function updateTime() {
 }
 
 /**
+ * get a random integer between min (inclusive) and max (exclusive)
+ * @param min: the inclusive minimum integer value
+ * @param max: the exclusive maximum integer value
+ * @returns the randomly generated integer between min and max
+ */
+function getRandomInt(min, max) {
+	min = Math.ceil(min);
+	max = Math.floor(max);
+	return Math.floor(Math.random() * (max - min)) + min;
+}
+
+/**
  * populate the list of ghosts (4 ghost instances, each of a different ai type)
  */
 function createGhosts() {

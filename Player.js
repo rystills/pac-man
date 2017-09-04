@@ -78,7 +78,7 @@ Player.prototype.tryTakeWantDirection = function() {
 			if (!(this.direction%2)) {
 				//want to go from horizontal to vertical
 				if ((this.x == this.xPrev) || (((this.x - this.gridX*gridWidth >= gridWidth/2) && (this.xPrev - this.gridX*gridWidth <= gridWidth/2)) ||
-				((this.x - this.gridX*gridWidth <= gridWidth/2) && (this.xPrev - this.gridX*gridWidth >= gridWidth/2)))) {
+						((this.x - this.gridX*gridWidth <= gridWidth/2) && (this.xPrev - this.gridX*gridWidth >= gridWidth/2)))) {
 					//move to the center of the gridSpace, and change direction
 					if (this.checkDirectionIsLegal()) {
 						this.x -= (this.x - this.gridX*gridWidth - gridWidth/2);
@@ -88,7 +88,7 @@ Player.prototype.tryTakeWantDirection = function() {
 			else {
 				//want to go from vertical to horizontal
 				if ((this.y == this.yPrev) || (((this.y - this.gridY*gridHeight >= gridHeight/2) && (this.yPrev - this.gridY*gridHeight <= gridHeight/2)) ||
-				((this.y - this.gridY*gridHeight <= gridHeight/2) && (this.yPrev - this.gridY*gridHeight >= gridHeight/2)))) {
+						((this.y - this.gridY*gridHeight <= gridHeight/2) && (this.yPrev - this.gridY*gridHeight >= gridHeight/2)))) {
 					//move to the center of the gridSpace, and change direction
 					if (this.checkDirectionIsLegal()) {
 						this.y -= (this.y - this.gridY*gridHeight - gridHeight/2);
