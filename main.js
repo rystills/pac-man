@@ -39,18 +39,23 @@ function drawTriangle(x1,y1,x2,y2,x3,y3) {
 /**
  * check if the user has pressed space to begin the game
  */
-function checkStartGame() {
-	if (keyStates[" "]) {
-		//reset game vares for a fresh run
-		gameActive = true;
-		score = 0;
-		pellets = []
-		createPellets();
-		
-		//add an extra life and subtract it to reset player and ghost positions
-		lives = 4;
-		subtractLife();
+function restartGame(freshStart) {
+	if (freshStart == null) {
+		freshStart = true;
 	}
+	//reset game vares for a fresh run
+	if (freshStart) {
+		gameActive = true;
+		score = 0;	
+		lives = 3;
+	}
+	pellets = []
+	createPellets();
+	
+	//add an extra life and subtract it to reset player and ghost positions
+	++lives;
+	subtractLife();
+
 	
 }
 
@@ -61,7 +66,9 @@ function update() {
 	//update the deltaTime
 	updateTime();
 	
-	checkStartGame();
+	if (!gameActive && keyStates[" "]) {
+		restartGame();
+	}
 	
 	//update all game objects
 	if (gameActive) {
@@ -69,6 +76,11 @@ function update() {
 	}
 	for (var i = 0; i < ghosts.length; ++i) {
 		ghosts[i].update();
+	}
+	
+	//restart if all pellets have been collected
+	if (pellets.length == 0) {
+		restartGame(false);
 	}
 	
 	render();
