@@ -145,7 +145,7 @@ function render() {
 		context.fill();
 		//second half of body
 		context.beginPath();
-		context.arc(player.x, player.y, radius, -rot + 0.75 * Math.PI, -rot + 1.75 * Math.PI, false);
+		context.arc(player.x, player.y, radius, -rot + 0.75 * Math.PI, -rot + Math.PI * (2 + Math.sin(totalTime*10)/4), false);
 		context.fill();
 		//eye
 		context.beginPath();
@@ -235,6 +235,7 @@ function updateTime() {
 	//divide by 1,000 to get deltaTime in milliseconds
     deltaTime = (curTime - prevTime) / 1000;
     prevTime = curTime;
+    totalTime += deltaTime;
 }
 
 /**
@@ -295,6 +296,7 @@ function startGame() {
 	//init global time vars for delta time calculation
 	prevTime = Date.now();
 	deltaTime = 0;
+	totalTime = 0;
 	
 	//init global game vars
 	canvas = document.getElementById("canvas");
