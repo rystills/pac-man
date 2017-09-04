@@ -24,6 +24,19 @@ function clearScreen() {
 }
 
 /**
+ * draw a triangle connecting 3 points
+ */
+function drawTriangle(x1,y1,x2,y2,x3,y3) {
+	//create our path
+	context.beginPath();
+	context.moveTo(x1, y1);
+	context.lineTo(x2, y2);
+	context.lineTo(x3, y3);
+    //fill the path (fill color should be set prior to calling this method)
+	context.fill();
+}
+
+/**
  * main game loop; update all aspects of the game in-order
  */
 function update() {
@@ -47,6 +60,29 @@ function update() {
 		}
 	}
 	
+	//draw the ghosts
+	for (var i = 0; i < ghosts.length; ++i) {
+		g = ghosts[i];
+		context.fillStyle = g.color;
+		//head (180 degree rotated semicircle)
+		context.beginPath();
+		context.arc(g.x, g.y, g.width/2, 1 * Math.PI, 2 * Math.PI, false);
+		context.fill();
+		//body (square minus a small amount from the height to leave room for bottom triangles)
+		context.fillRect(g.x - g.width/2, g.y, g.width, g.height/2 - 4);
+		//bottom (three triangles running across the width)
+		var cornerX = g.x - g.width/2;
+		var cornerY = g.y + g.height/2 - 4;
+		for (var r = 0; r < 3; ++r) {
+			leftX = cornerX + g.width/3 * r;
+			rightX = cornerX + g.width/3 * (r+1);
+			topY = cornerY;
+			botY = cornerY + 4;
+			drawTriangle(leftX,topY,rightX,topY,leftX + (rightX-leftX)/2,botY);
+		}
+		
+	}
+		
 	//draw the pellets
 	context.fillStyle="#00FF00";
 	for (var i = 0; i < pellets.length; ++i) {
@@ -62,15 +98,14 @@ function update() {
 	context.arc(player.x, player.y, radius, -rot + 0.25 * Math.PI, -rot + 1.25 * Math.PI, false);
 	context.fillStyle = "rgb(255, 255, 0)";
 	context.fill();
-	
 	//second half of body
 	context.beginPath();
 	context.arc(player.x, player.y, radius, -rot + 0.75 * Math.PI, -rot + 1.75 * Math.PI, false);
 	context.fill();
-	
 	//eye
 	context.beginPath();
-	context.arc(player.x - (player.direction % 2 ? radius*.5 : 0), player.y - (player.direction % 2 ? 0 : radius*.5), radius*.1, 0, 2 * Math.PI, false);
+	context.arc(player.x - (player.direction % 2 ? radius*.5 : 0), 
+			player.y - (player.direction % 2 ? 0 : radius*.5), radius*.1, 0, 2 * Math.PI, false);
 	context.fillStyle = "rgb(0, 0, 0)";
 	context.fill();
 	
@@ -95,6 +130,17 @@ function updateTime() {
 	//divide by 1,000 to get deltaTime in milliseconds
     deltaTime = (curTime - prevTime) / 1000;
     prevTime = curTime;
+}
+
+/**
+ * populate the list of ghosts (4 ghost instances, each of a different ai type)
+ */
+function createGhosts() {
+	ghosts = [];
+	ghosts.push(new Ghost(200,400,"#ffee35"));
+	ghosts.push(new Ghost(300,400,"#3dceff"));
+	ghosts.push(new Ghost(400,400,"#c9adff"));
+	ghosts.push(new Ghost(500,400,"#e20047"));
 }
 
 /**
@@ -146,6 +192,7 @@ function startGame() {
 	//instantiate global game objects
 	player = new Player();
 	createPellets();
+	createGhosts();
 	
 	//set the game to call the 'update' method on each tick
 	_intervalId = setInterval(update, 1000 / fps); //set refresh rate to desired fps
@@ -156,7 +203,7 @@ function startGame() {
  */
 function loadAssets() {	
 	//global list of script assets and current script number
-	scriptFiles = ["levels.js","Player.js","Pellet.js"];
+	scriptFiles = ["levels.js","Player.js","Ghost.js","Pellet.js"];
 	scriptNum = 0;
 	
 	//global list of script contents
