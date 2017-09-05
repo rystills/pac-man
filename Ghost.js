@@ -10,20 +10,43 @@ Ghost.prototype.updatePositionalVars = function() {
 	//update our previous position vars to our new position
 	this.xPrev = this.x;
 	this.yPrev = this.y;
+	this.dirPrev = this.direction;
+}
+
+/**
+ * move any remaining distance that may have been lost due to turning
+ */
+Ghost.prototype.moveRemainingDistance = function() {
+	//distance will always be correct if we haven't changed our direction
+	if (this.dirPrev != this.direction) {
+		//calculate the distance moved this step
+		var distX = this.x-this.xPrev;
+		var distY = this.y-this.yPrev;
+		var distMoved = Math.sqrt(distX*distX + distY*distY);
+		//calculate the distance we should have moved
+		var properDist = deltaTime * this.speed;
+		if (properDist > distMoved) {
+			//if there is a discrepancy in the distances, move the remaining amount in our new direction
+			this.move(properDist-distMoved);
+		}
+	}
 }
 
 /**
  * move the ghost forward
  */
-Ghost.prototype.move = function() {
-	//move the ghost based on its current direction
+Ghost.prototype.move = function(distance) {
+	if (distance == null) {
+		distance = this.speed * deltaTime ;
+	}
+	//move the player based on their current direction
 	if (!(this.direction % 2)) {
 		//horizontal movement
-		this.x -= Math.sign(this.direction-1) * deltaTime * this.speed;
+		this.x -= Math.sign(this.direction-1) * distance;
 	}
 	else {
 		//vertical movement
-		this.y += Math.sign(this.direction - 2) * deltaTime * this.speed;
+		this.y += Math.sign(this.direction - 2) * distance;
 	}
 }
 
@@ -116,6 +139,8 @@ Ghost.prototype.update = function() {
 		this.checkChangeDirection();
 	}
 	
+	this.moveRemainingDistance();
+	
 	this.updatePositionalVars();
 } 
 
@@ -145,6 +170,7 @@ function Ghost(gridX,gridY,color,direction) {
 	this.speed = 85;
 	this.direction = direction;
 	this.changingDirection = false;
+	this.dirPrev = this.direction;
 	this.changeGridX = 0;
 	this.changeGridY = 0;
 	

@@ -121,17 +121,39 @@ Player.prototype.checkDirectionalInput = function() {
 }
 
 /**
+ * move any remaining distance that may have been lost due to turning
+ */
+Player.prototype.moveRemainingDistance = function() {
+	//distance will always be correct if we haven't changed our direction
+	if (this.dirPrev != this.direction) {
+		//calculate the distance moved this step
+		var distX = this.x-this.xPrev;
+		var distY = this.y-this.yPrev;
+		var distMoved = Math.sqrt(distX*distX + distY*distY);
+		//calculate the distance we should have moved
+		var properDist = deltaTime * this.speed;
+		if (properDist > distMoved) {
+			//if there is a discrepancy in the distances, move the remaining amount in our new direction
+			this.move(properDist-distMoved);
+		}
+	}
+}
+
+/**
  * move the player forward
  */
-Player.prototype.move = function() {
+Player.prototype.move = function(distance) {
+	if (distance == null) {
+		distance = this.speed * deltaTime ;
+	}
 	//move the player based on their current direction
 	if (!(this.direction % 2)) {
 		//horizontal movement
-		this.x -= Math.sign(this.direction-1) * deltaTime * this.speed;
+		this.x -= Math.sign(this.direction-1) * distance;
 	}
 	else {
 		//vertical movement
-		this.y += Math.sign(this.direction - 2) * deltaTime * this.speed;
+		this.y += Math.sign(this.direction - 2) * distance;
 	}
 }
 
@@ -146,6 +168,7 @@ Player.prototype.updatePositionalVars = function() {
 	//update our previous position vars to our new position
 	this.xPrev = this.x;
 	this.yPrev = this.y;
+	this.dirPrev = this.direction;
 }
 
 /**
@@ -186,6 +209,8 @@ Player.prototype.update = function() {
 	
 	this.checkEatPellet();
 	
+	this.moveRemainingDistance();
+	
 	this.updatePositionalVars();
 	
 	this.checkHitGhost();
@@ -219,6 +244,7 @@ function Player() {
 	this.direction = 2;
 	this.wantDirection = 2;
 	this.moveKeys = ["D","W","A","S"];
+	this.dirPrev = this.direction;
 	
 	//keep track of initial position and direction for restarting
 	this.startX = this.x;

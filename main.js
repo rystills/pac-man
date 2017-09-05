@@ -37,7 +37,7 @@ function drawTriangle(x1,y1,x2,y2,x3,y3) {
 }
 
 /**
- * check if the user has pressed space to begin the game
+ * begin the game, optionally resetting score and lives if this is a fresh start
  */
 function restartGame(freshStart) {
 	if (freshStart == null) {
@@ -66,7 +66,7 @@ function update() {
 	//update the deltaTime
 	updateTime();
 	
-	if (!gameActive && keyStates[" "]) {
+	if (!gameActive && keyStates[String.fromCharCode(13)]) {
 		restartGame();
 	}
 	
@@ -141,7 +141,7 @@ function render() {
 		//first half of body
 		context.beginPath();
 		context.arc(player.x, player.y, radius, 
-				-rot + Math.PI  * (.25 - Math.sin(totalTime*10)/4), 
+				-rot + Math.PI  * (.2 - Math.sin(totalTime*10)/5), 
 				-rot + 1.25 * Math.PI, 
 				false);
 		context.fillStyle = "rgb(255, 255, 0)";
@@ -150,7 +150,7 @@ function render() {
 		context.beginPath();
 		context.arc(player.x, player.y, radius, 
 				-rot + 0.75 * Math.PI, 
-				-rot + Math.PI * (1.75 + Math.sin(totalTime*10)/4), 
+				-rot + Math.PI * (1.8 + Math.sin(totalTime*10)/5), 
 				false);
 		context.fillStyle = "rgb(255, 255, 0)";
 		context.fill();
@@ -205,7 +205,7 @@ function render() {
 		context.fillStyle = "rgba(255,255,255,1)";
 		
 		//figure out the dimensions of the string so that we can properly center it
-		var startInstructions = "Press Space to Play";
+		var startInstructions = "Press Enter to Play";
 		context.font = "46px Arial";
 	    textWidth = context.measureText(startInstructions).width;
 	    //height is roughly equivalent to the text size
