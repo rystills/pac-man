@@ -140,12 +140,19 @@ function render() {
 		var rot = Math.PI/2 * player.direction;
 		//first half of body
 		context.beginPath();
-		context.arc(player.x, player.y, radius, -rot + 0.25 * Math.PI, -rot + 1.25 * Math.PI, false);
+		context.arc(player.x, player.y, radius, 
+				-rot + Math.PI  * (.25 - Math.sin(totalTime*10)/4), 
+				-rot + 1.25 * Math.PI, 
+				false);
 		context.fillStyle = "rgb(255, 255, 0)";
 		context.fill();
 		//second half of body
 		context.beginPath();
-		context.arc(player.x, player.y, radius, -rot + 0.75 * Math.PI, -rot + Math.PI * (2 + Math.sin(totalTime*10)/4), false);
+		context.arc(player.x, player.y, radius, 
+				-rot + 0.75 * Math.PI, 
+				-rot + Math.PI * (1.75 + Math.sin(totalTime*10)/4), 
+				false);
+		context.fillStyle = "rgb(255, 255, 0)";
 		context.fill();
 		//eye
 		context.beginPath();
@@ -317,7 +324,7 @@ function startGame() {
 	createGhosts();
 	
 	//set the game to call the 'update' method on each tick
-	_intervalId = setInterval(update, 1000 / fps); //set refresh rate to desired fps
+	_intervalId = setInterval(update, 1000 / fps);
 }
 
 /**
