@@ -90,12 +90,9 @@ function update() {
 }
 
 /**
- * render all objects and HUDLeft elements
+ * draw the grid located in levels.js
  */
-function render() {
-	//clear and re-render the screen
-	clearScreen();
-	
+function drawGrid() {
 	//draw each grid piece from the level file
 	context.fillStyle="#4444FF";
 	for (var i = 0; i < grid.length; ++i) {
@@ -106,13 +103,23 @@ function render() {
 			}
 		}
 	}
-		
+}
+
+/**
+ * draw each pellet remaining on the stage (layout located in levels.js)
+ */
+function drawPellets() {
 	//draw the pellets
 	context.fillStyle="#BBFF00";
 	for (var i = 0; i < pellets.length; ++i) {
 		context.fillRect(pellets[i].x - pellets[i].width/2, pellets[i].y - pellets[i].height/2,pellets[i].width,pellets[i].height);
 	}
-	
+}
+
+/**
+ * draw each ghost using the color stored in Ghost.js
+ */
+function drawGhosts() {
 	//draw the ghosts (use 1 pixel vertical overlap to account for HTML canvas rounding issues)
 	for (var i = 0; i < ghosts.length; ++i) {
 		g = ghosts[i];
@@ -133,9 +140,13 @@ function render() {
 			botY = cornerY + 5;
 			drawTriangle(leftX,topY,rightX,topY,leftX + (rightX-leftX)/2,botY);
 		}
-		
 	}
+}
 
+/**
+ * draw the player with a dynamically moving mouth
+ */
+function drawPlayer() {
 	//draw the player, only if the game is active
 	if (gameActive) {
 		context.fillStyle = "#000000";
@@ -164,10 +175,12 @@ function render() {
 		context.fillStyle = "rgb(0, 0, 0)";
 		context.fill();
 	}
-	
-	drawVerticalScore("GAME",HUDLeft,score);
-	drawVerticalScore("HIGH",HUDRight,bestScore);
-	
+}
+
+/**
+ * draw the player's lives as a series of pac-man icons
+ */
+function drawLives() {
 	//draw each life as a yellow circle
 	ctx.fillStyle = "rgb(255, 255, 0)";
 	var posX = 250;
@@ -177,7 +190,13 @@ function render() {
 		ctx.arc(posX + 40*i,posY, player.width/2, 0, 2 * Math.PI, false);
 		ctx.fill();
 	}
-	
+}
+
+/**
+ * render a dimming rect over the screen if the game is not active
+ * @returns
+ */
+function checkDimScreen() {
 	//dim the screen and show game over text if the game is not active
 	if (!gameActive) {
 		//dim screen with semi-transparent black rectangle
@@ -197,6 +216,12 @@ function render() {
 	}
 }
 
+/**
+ * draw a score value vertically from top to bottom
+ * @param title: the first part of the score title
+ * @param cnv: the canvas to render to
+ * @param scr: the score value to display
+ */
 function drawVerticalScore(title,cnv,scr) {
 	ctx = cnv.getContext("2d");
 	//set the title font
@@ -227,6 +252,25 @@ function drawVerticalScore(title,cnv,scr) {
 	for (var i = 0; i < 5; ++i) {
 		ctx.fillText(scoreString[i],cnv.width/2 - textWidth/2,textHeight * (5+i));
 	}
+}
+
+/**
+ * render all objects and HUD elements
+ */
+function render() {
+	//clear and re-render the screen
+	clearScreen();
+	
+	drawGrid();
+	drawPellets();
+	drawGhosts();
+	drawPlayer();
+	
+	drawVerticalScore("GAME",HUDLeft,score);
+	drawVerticalScore("HIGH",HUDRight,bestScore);
+	drawLives();
+	
+	checkDimScreen();
 }
 
 /**
