@@ -241,7 +241,7 @@ function Player() {
 	this.width = 18;
 	this.height = 18;
 	this.x = this.gridX * gridWidth + this.width/2;
-	this.y = this.gridY * gridHeight + this.height/2;
+	this.y = this.gridY * gridHeight + this.height/2+1;
 	this.xPrev = this.x;
 	this.yPrev = this.y;
 	
