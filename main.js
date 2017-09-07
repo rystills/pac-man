@@ -88,14 +88,14 @@ function update() {
 }
 
 /**
- * render all objects and HUD items
+ * render all objects and HUD elements
  */
 function render() {
 	//clear and re-render the screen
 	clearScreen();
 	
 	//draw each grid piece from the level file
-	context.fillStyle="#FFFFFF";
+	context.fillStyle="#4444FF";
 	for (var i = 0; i < grid.length; ++i) {
 		for (var r = 0; r < grid[i].length; ++r) {
 			//draw walls (use 1 pixel vertical overlap to account for HTML canvas rounding issues)
@@ -106,7 +106,7 @@ function render() {
 	}
 		
 	//draw the pellets
-	context.fillStyle="#00FF00";
+	context.fillStyle="#BBFF00";
 	for (var i = 0; i < pellets.length; ++i) {
 		context.fillRect(pellets[i].x - pellets[i].width/2, pellets[i].y - pellets[i].height/2,pellets[i].width,pellets[i].height);
 	}
@@ -264,9 +264,9 @@ function getRandomInt(min, max) {
  */
 function createGhosts() {
 	ghosts = [];
-	ghosts.push(new Ghost(10,14,"#ffee35",2));
+	ghosts.push(new Ghost(10,14,"#ffAA35",2));
 	ghosts.push(new Ghost(12,14,"#3dceff",2));
-	ghosts.push(new Ghost(15,14,"#c9adff",0));
+	ghosts.push(new Ghost(15,14,"#fda3ff",0));
 	ghosts.push(new Ghost(17,14,"#e20047",0));
 }
 
@@ -334,7 +334,7 @@ function startGame() {
  */
 function loadAssets() {	
 	//global list of script assets and current script number
-	scriptFiles = ["levels.js","Player.js","Ghost.js","Pellet.js"];
+	scriptFiles = ["levels.js","Player.js","Ghost.js","Pellet.js","Button.js"];
 	scriptNum = 0;
 	
 	//global list of script contents

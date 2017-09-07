@@ -165,8 +165,8 @@ function Ghost(gridX,gridY,color,direction) {
 	this.xPrev = this.x;
 	this.yPrev = this.y;
 	this.color = color;
-	this.width = 20;
-	this.height = 20;
+	this.width = 18;
+	this.height = 18;
 	this.speed = 85;
 	this.direction = direction;
 	this.changingDirection = false;

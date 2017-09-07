@@ -238,8 +238,8 @@ function Player() {
 	this.gridX = 14;
 	this.gridY = 26;
 	this.speed = 100;
-	this.width = 20;
-	this.height = 20;
+	this.width = 18;
+	this.height = 18;
 	this.x = this.gridX * gridWidth + this.width/2;
 	this.y = this.gridY * gridHeight + this.height/2;
 	this.xPrev = this.x;
