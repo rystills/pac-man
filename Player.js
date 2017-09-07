@@ -106,7 +106,7 @@ Player.prototype.checkDirectionalInput = function() {
 	//poll for input to see if the player direction should change
 	gridVal = grid[this.gridY][this.gridX];
 	for (var i = 0; i < this.moveKeys.length; ++i) {
-		if (keyStates[this.moveKeys[i]]) {
+		if (keyStates[this.moveKeys[i]] || keyStates[this.moveKeysAlt[i]]) {
 			//before setting the direction, check if our current grid space allows that movement
 			if (gridVal == 3 || gridVal == (i % 2 ? 2 : 1)) {
 				//movement is allowed, now check if we are trying to change between x and y movement
@@ -249,6 +249,8 @@ function Player() {
 	this.direction = 2;
 	this.wantDirection = 2;
 	this.moveKeys = ["D","W","A","S"];
+	this.moveKeysAlt = [String.fromCharCode(39),String.fromCharCode(38),
+		String.fromCharCode(37),String.fromCharCode(40)]
 	this.dirPrev = this.direction;
 	
 	//keep track of initial position and direction for restarting

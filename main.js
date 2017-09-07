@@ -14,6 +14,48 @@ function setupKeyListeners() {
 }
 
 /**
+ * loads all the needed files, then calls startGame to begin the game
+ */
+function loadAssets() {	
+	//global list of script assets and current script number
+	scriptFiles = ["levels.js","Player.js","Ghost.js","Pellet.js","Button.js"];
+	scriptNum = 0;
+	
+	//global list of script contents
+	scripts = {}
+	
+	//quick and dirty way to store local text files as JS objects
+	object = null;
+	
+	loadAsset(scriptFiles,0);
+}
+
+/**
+ * load a single asset, setting onload to move on to the next asset
+ */
+function loadAsset() {
+	//if the global object var contains a string, append it to the global scripts list
+	if (object != null) {
+		scripts[scriptFiles[scriptNum-1]] = object;
+		object = null;
+	}
+	//once we've loaded all the objects, we are ready to start the game
+	if (scriptNum >= scriptFiles.length) {
+		return startGame();
+	}
+	
+	//load the desired script file
+	var elem = document.createElement('script');
+	elem.type = 'text/javascript';
+	elem.onload = loadAsset;
+	elem.src = scriptFiles[scriptNum];
+	
+	//add the new script to the body and increment the script count
+	document.body.appendChild(elem);
+	++scriptNum;
+}
+
+/**
  * clear the entire screen to black, preparing it for a fresh render
  */
 function clearScreen() {
@@ -73,10 +115,12 @@ function update() {
 		restartGame();
 	}
 	
-	//update all game objects
+	//update player first
 	if (gameActive) {
 		player.update();	
 	}
+	
+	//next update ghosts
 	for (var i = 0; i < ghosts.length; ++i) {
 		ghosts[i].update();
 	}
@@ -86,6 +130,7 @@ function update() {
 		restartGame(false);
 	}
 	
+	//once all updates are out of the way, render the frame
 	render();
 }
 
@@ -199,21 +244,16 @@ function drawPlayer(posX,posY,ctx,staticOrientation) {
  * draw the player's lives as a series of pac-man icons
  */
 function drawLives() {
-	//draw each life as a yellow circle
-	HUDLeftContext.fillStyle = "rgb(255, 255, 0)";
+	//draw each life as a replica of the player with a fixed rotation
 	var posX = HUDLeft.width/2;
 	var posY = 400;
 	for (var i = 0; i < lives-1; ++i) {
 		drawPlayer(posX,posY + 50*i,HUDLeftContext,true);
-		/*HUDLeftContext.beginPath();
-		HUDLeftContext.arc(posX,posY + 50*i, player.width, 0, 2 * Math.PI, false);
-		HUDLeftContext.fill();*/
 	}
 }
 
 /**
  * render a dimming rect over the screen if the game is not active
- * @returns
  */
 function checkDimScreen() {
 	//dim the screen and show game over text if the game is not active
@@ -277,18 +317,23 @@ function drawVerticalScore(title,cnv,scr) {
  * render all objects and HUD elements
  */
 function render() {
-	//clear and re-render the screen
+	//clear all canvases for a fresh render
 	clearScreen();
 	
+	//draw grid
 	drawGrid();
+	
+	//draw all objects
 	drawPellets();
 	drawGhosts();
 	drawPlayer();
 	
+	//draw gui elements
 	drawVerticalScore("GAME",HUDLeft,score);
 	drawVerticalScore("HIGH",HUDRight,bestScore);
 	drawLives();
 	
+	//dim the screen if the game is not active
 	checkDimScreen();
 }
 
@@ -406,48 +451,6 @@ function startGame() {
 	
 	//set the game to call the 'update' method on each tick
 	_intervalId = setInterval(update, 1000 / fps);
-}
-
-/**
- * loads all the needed files, then calls startGame to begin the game
- */
-function loadAssets() {	
-	//global list of script assets and current script number
-	scriptFiles = ["levels.js","Player.js","Ghost.js","Pellet.js","Button.js"];
-	scriptNum = 0;
-	
-	//global list of script contents
-	scripts = {}
-	
-	//quick and dirty way to store local text files as JS objects
-	object = null;
-	
-	loadAsset(scriptFiles,0);
-}
-
-/**
- * load a single asset, setting onload to move on to the next asset
- */
-function loadAsset() {
-	//if the global object var contains a string, append it to the global scripts list
-	if (object != null) {
-		scripts[scriptFiles[scriptNum-1]] = object;
-		object = null;
-	}
-	//once we've loaded all the objects, we are ready to start the game
-	if (scriptNum >= scriptFiles.length) {
-		return startGame();
-	}
-	
-	//load the desired script file
-	var elem = document.createElement('script');
-	elem.type = 'text/javascript';
-	elem.onload = loadAsset;
-	elem.src = scriptFiles[scriptNum];
-	
-	//add the new script to the body and increment the script count
-	document.body.appendChild(elem);
-	++scriptNum;
 }
 
 setupKeyListeners();
