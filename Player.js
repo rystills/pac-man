@@ -177,10 +177,15 @@ Player.prototype.updatePositionalVars = function() {
 Player.prototype.checkEatPellet = function() {
 	for (var i = 0; i < pellets.length; ++i) {
 		if (collisionCheck(this,pellets[i])) {
+			//pellet collision detected; reomove the pellet and increment score by 1
 			pellets.splice(i,1);
 			--i;
-			score+=100;
+			score+=1;
 		}
+	}
+	//check for a live update of the highscore
+	if (score > bestScore) {
+		bestScore = score;
 	}
 }
 

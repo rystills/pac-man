@@ -66,7 +66,8 @@ function update() {
 	//update the deltaTime
 	updateTime();
 	
-	if (!gameActive && keyStates[String.fromCharCode(13)]) {
+	//allow restarting at any time
+	if (keyStates[String.fromCharCode(13)]) {
 		restartGame();
 	}
 	
@@ -221,9 +222,6 @@ function subtractLife() {
 	if (--lives == 0) {
 		//game is over; no need to reset ghost or player positions
 		gameActive = false;
-		if (score > bestScore) {
-			bestScore = score;
-		}
 	}
 	else {
 		//reset player and ghost positions
