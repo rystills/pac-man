@@ -19,8 +19,10 @@ function setupKeyListeners() {
 function clearScreen() {
 	context.fillStyle="#000000";
 	context.fillRect(0,0,canvas.width,canvas.height);
-	HUDContext.fillStyle="#000000";
-	HUDContext.fillRect(0,0,HUD.width,HUD.height);
+	HUDLeftContext.fillStyle="#000000";
+	HUDLeftContext.fillRect(0,0,HUDLeft.width,HUDLeft.height);
+	HUDRightContext.fillStyle="#000000";
+	HUDRightContext.fillRect(0,0,HUDRight.width,HUDRight.height);
 }
 
 /**
@@ -88,7 +90,7 @@ function update() {
 }
 
 /**
- * render all objects and HUD elements
+ * render all objects and HUDLeft elements
  */
 function render() {
 	//clear and re-render the screen
@@ -162,39 +164,19 @@ function render() {
 		context.fillStyle = "rgb(0, 0, 0)";
 		context.fill();
 	}
-		
-	//draw the HUD
-	HUDContext.font = "30px Arial";
 	
-	//draw the score
-	HUDContext.fillStyle = "#FFFFFF";
-	//left-pad the score with 0's 
-	scoreString = score.toString();
-	var scoreLen = scoreString.length;
-	while (++scoreLen < 6) {
-		scoreString = "0" + scoreString;
-	}
-	HUDContext.fillText("Score: "  + scoreString,10,35);
+	drawVerticalScore("GAME",HUDLeft,score);
+	drawVerticalScore("HIGH",HUDRight,bestScore);
 	
 	//draw each life as a yellow circle
-	HUDContext.fillStyle = "rgb(255, 255, 0)";
+	ctx.fillStyle = "rgb(255, 255, 0)";
 	var posX = 250;
 	var posY = 25;
 	for (var i = 0; i < lives; ++i) {
-		HUDContext.beginPath();
-		HUDContext.arc(posX + 40*i,posY, player.width/2, 0, 2 * Math.PI, false);
-		HUDContext.fill();
+		ctx.beginPath();
+		ctx.arc(posX + 40*i,posY, player.width/2, 0, 2 * Math.PI, false);
+		ctx.fill();
 	}
-	
-	//draw the best score
-	HUDContext.fillStyle = "#FFFFFF";
-	//left-pad the best score with 0's 
-	bestScoreString = bestScore.toString();
-	var bestScoreLen = bestScoreString.length;
-	while (++bestScoreLen < 6) {
-		bestScoreString = "0" + bestScoreString;
-	}
-	HUDContext.fillText("Best: "  + bestScoreString,390,35);
 	
 	//dim the screen and show game over text if the game is not active
 	if (!gameActive) {
@@ -206,12 +188,44 @@ function render() {
 		context.fillStyle = "rgba(255,255,255,1)";
 		
 		//figure out the dimensions of the string so that we can properly center it
-		var startInstructions = "Press Enter to Play";
+		var startInstructions = "PRESS ENTER TO PLAY";
 		context.font = "46px Arial";
 	    textWidth = context.measureText(startInstructions).width;
 	    //height is roughly equivalent to the text size
 	    textHeight = 46;
 		context.fillText(startInstructions,canvas.width/2 - textWidth/2,canvas.height/2 - textHeight/2);
+	}
+}
+
+function drawVerticalScore(title,cnv,scr) {
+	ctx = cnv.getContext("2d");
+	//set the title font
+	ctx.font = "30px Arial";
+	
+	//draw the score
+	ctx.fillStyle = "#ffAFF8";
+	//left-pad the score with 0's 
+	scoreString = scr.toString();
+	var scoreLen = scoreString.length;
+	while (++scoreLen < 6) {
+		scoreString = "0" + scoreString;
+	}
+	//draw score string in vertical slices
+	scoreStringA = title;
+    var textWidth = ctx.measureText(scoreStringA).width;
+    //height is roughly equivalent to the text size
+    var textHeight = 30;
+	ctx.fillText(scoreStringA,cnv.width/2 - textWidth/2, textHeight*2);
+	
+	scoreStringB = "SCORE"
+    textWidth = ctx.measureText(scoreStringB).width;
+    //height is roughly equivalent to the text size
+	ctx.fillText(scoreStringB,cnv.width/2 - textWidth/2, textHeight*3);
+	
+	textWidth = ctx.measureText("0").width;
+	ctx.fillStyle = "#FFFFFF";
+	for (var i = 0; i < 5; ++i) {
+		ctx.fillText(scoreString[i],cnv.width/2 - textWidth/2,textHeight * (5+i));
 	}
 }
 
@@ -309,9 +323,11 @@ function startGame() {
 	
 	//init global game vars
 	canvas = document.getElementById("canvas");
-	HUD = document.getElementById("HUD");
+	HUDLeft = document.getElementById("HUDLeft");
+	HUDRight = document.getElementById("HUDRight");
 	context = canvas.getContext("2d");
-	HUDContext = HUD.getContext("2d");
+	HUDLeftContext = HUDLeft.getContext("2d");
+	HUDRightContext = HUDRight.getContext("2d");
 	grid = scripts["levels.js"]["level1"];
 	gridWidth = canvas.width / grid[0].length;
 	gridHeight = canvas.height / grid.length;
