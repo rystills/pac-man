@@ -145,35 +145,53 @@ function drawGhosts() {
 
 /**
  * draw the player with a dynamically moving mouth
+ * @param posX; custom render x coordinate (defaults to player position)
+ * @param posY; custom render y coordinate (defaults to player position)
+ * @param ctx; custom context to draw the player on (defaults to main context)
+ * @param staticOrientation; optional flag to ignore player orientation and draw facing right
  */
-function drawPlayer() {
+function drawPlayer(posX,posY,ctx,staticOrientation) {
+	if (posY == null) {
+		posX = player.x;
+		posY = player.y;
+	}
+	if (ctx == null) {
+		ctx= context;
+	}
+	if (staticOrientation != null) {
+		dir = 0;
+	}
+	else {
+		dir = player.direction;
+	}
+	
 	//draw the player, only if the game is active
 	if (gameActive) {
-		context.fillStyle = "#000000";
+		ctx.fillStyle = "#000000";
 		var radius = player.width/2;
-		var rot = Math.PI/2 * player.direction;
+		var rot = Math.PI/2 * dir;
 		//first half of body
-		context.beginPath();
-		context.arc(player.x, player.y, radius, 
+		ctx.beginPath();
+		ctx.arc(posX, posY, radius, 
 				-rot + Math.PI  * (.2 - Math.sin(totalTime*10)/5), 
 				-rot + 1.25 * Math.PI, 
 				false);
-		context.fillStyle = "rgb(255, 255, 0)";
-		context.fill();
+		ctx.fillStyle = "rgb(255, 255, 0)";
+		ctx.fill();
 		//second half of body
-		context.beginPath();
-		context.arc(player.x, player.y, radius, 
+		ctx.beginPath();
+		ctx.arc(posX, posY, radius, 
 				-rot + 0.75 * Math.PI, 
 				-rot + Math.PI * (1.8 + Math.sin(totalTime*10)/5), 
 				false);
-		context.fillStyle = "rgb(255, 255, 0)";
-		context.fill();
+		ctx.fillStyle = "rgb(255, 255, 0)";
+		ctx.fill();
 		//eye
-		context.beginPath();
-		context.arc(player.x - (player.direction % 2 ? radius*.5 : 0), 
-				player.y - (player.direction % 2 ? 0 : radius*.5), radius*.1, 0, 2 * Math.PI, false);
-		context.fillStyle = "rgb(0, 0, 0)";
-		context.fill();
+		ctx.beginPath();
+		ctx.arc(posX - (dir % 2 ? radius*.5 : 0), 
+				posY - (dir % 2 ? 0 : radius*.5), radius*.1, 0, 2 * Math.PI, false);
+		ctx.fillStyle = "rgb(0, 0, 0)";
+		ctx.fill();
 	}
 }
 
@@ -182,13 +200,14 @@ function drawPlayer() {
  */
 function drawLives() {
 	//draw each life as a yellow circle
-	ctx.fillStyle = "rgb(255, 255, 0)";
-	var posX = 250;
-	var posY = 25;
-	for (var i = 0; i < lives; ++i) {
-		ctx.beginPath();
-		ctx.arc(posX + 40*i,posY, player.width/2, 0, 2 * Math.PI, false);
-		ctx.fill();
+	HUDLeftContext.fillStyle = "rgb(255, 255, 0)";
+	var posX = HUDLeft.width/2;
+	var posY = 400;
+	for (var i = 0; i < lives-1; ++i) {
+		drawPlayer(posX,posY + 50*i,HUDLeftContext,true);
+		/*HUDLeftContext.beginPath();
+		HUDLeftContext.arc(posX,posY + 50*i, player.width, 0, 2 * Math.PI, false);
+		HUDLeftContext.fill();*/
 	}
 }
 
