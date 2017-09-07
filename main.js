@@ -237,8 +237,13 @@ function subtractLife() {
  */
 function updateTime() {
 	var curTime = Date.now();
-	//divide by 1,000 to get deltaTime in milliseconds
+	//divide by 1,000 to get deltaTime in seconds
     deltaTime = (curTime - prevTime) / 1000;
+    //cap deltaTime at ~15 ticks/sec as below this threshhold collisions may not be properly detected
+    console.log(deltaTime);
+    if (deltaTime > .067) {
+    	deltaTime = .067;
+    }
     prevTime = curTime;
     totalTime += deltaTime;
 }
