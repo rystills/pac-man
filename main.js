@@ -98,9 +98,9 @@ function render() {
 	context.fillStyle="#FFFFFF";
 	for (var i = 0; i < grid.length; ++i) {
 		for (var r = 0; r < grid[i].length; ++r) {
-			//draw walls
+			//draw walls (use 1 pixel vertical overlap to account for HTML canvas rounding issues)
 			if (grid[i][r] == 0) {
-				context.fillRect(r*gridWidth,i*gridHeight,gridWidth,gridHeight);
+				context.fillRect(r*gridWidth,i*gridHeight-1,gridWidth,gridHeight+2);
 			}
 		}
 	}
@@ -111,7 +111,7 @@ function render() {
 		context.fillRect(pellets[i].x - pellets[i].width/2, pellets[i].y - pellets[i].height/2,pellets[i].width,pellets[i].height);
 	}
 	
-	//draw the ghosts
+	//draw the ghosts (use 1 pixel vertical overlap to account for HTML canvas rounding issues)
 	for (var i = 0; i < ghosts.length; ++i) {
 		g = ghosts[i];
 		context.fillStyle = g.color;
@@ -120,15 +120,15 @@ function render() {
 		context.arc(g.x, g.y, g.width/2, 1 * Math.PI, 2 * Math.PI, false);
 		context.fill();
 		//body (square minus a small amount from the height to leave room for bottom triangles)
-		context.fillRect(g.x - g.width/2, g.y, g.width, g.height/2 - 4);
+		context.fillRect(g.x - g.width/2, g.y-1, g.width, g.height/2 - 3);
 		//bottom (three triangles running across the width)
 		var cornerX = g.x - g.width/2;
-		var cornerY = g.y + g.height/2 - 4;
+		var cornerY = g.y + g.height/2 - 5;
 		for (var r = 0; r < 3; ++r) {
 			leftX = cornerX + g.width/3 * r;
 			rightX = cornerX + g.width/3 * (r+1);
 			topY = cornerY;
-			botY = cornerY + 4;
+			botY = cornerY + 5;
 			drawTriangle(leftX,topY,rightX,topY,leftX + (rightX-leftX)/2,botY);
 		}
 		
@@ -240,7 +240,6 @@ function updateTime() {
 	//divide by 1,000 to get deltaTime in seconds
     deltaTime = (curTime - prevTime) / 1000;
     //cap deltaTime at ~15 ticks/sec as below this threshhold collisions may not be properly detected
-    console.log(deltaTime);
     if (deltaTime > .067) {
     	deltaTime = .067;
     }
@@ -261,7 +260,7 @@ function getRandomInt(min, max) {
 }
 
 /**
- * populate the list of ghosts (4 ghost instances, each of a different ai type)
+ * populate the list of ghosts (4 ghost instances, each with a different body color)
  */
 function createGhosts() {
 	ghosts = [];
