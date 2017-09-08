@@ -1,4 +1,3 @@
-
 /**
  * update the ghost's grid and previous locations to match our new final x,y pos
  */

@@ -78,6 +78,7 @@ function Button(x,y,cnv, text, fontSize, clickFunc,clickArg) {
 	//init dimensions using canvas and fontSize
 	var context = this.canvas.getContext("2d");
 	context.font = this.fontSize + "px Arial";
-    this.width = context.measureText(this.text).width;
-    this.height = this.fontSize;
+	//add a 4 pixel border to the text dimensions to make room for button outline + fill
+    this.width = context.measureText(this.text).width + 4;
+    this.height = this.fontSize + 4;
 }

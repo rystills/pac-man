@@ -373,9 +373,26 @@ function drawVerticalScore(title,cnv,scr) {
 function drawButtons() {
 	for (var i = 0; i < buttons.length; ++i) {
 		var ctx = buttons[i].canvas.getContext("2d");
+		//fill red border color
+		ctx.fillStyle = "rgb(" + 
+		Math.round(buttons[i].blendWhiteness *.75) + ", " + 
+		Math.round(.15 * buttons[i].blendWhiteness) + ", " + 
+		Math.round(.1 * buttons[i].blendWhiteness) + ")";
+		ctx.fillRect(buttons[i].x - buttons[i].width/2, buttons[i].y - buttons[i].height/2, buttons[i].width,buttons[i].height);
+		
+		//fill blue inner color
+		ctx.fillStyle = "rgb(" + 
+		Math.round(buttons[i].blendWhiteness *.1) + ", " + 
+		Math.round(.15 * buttons[i].blendWhiteness) + ", " + 
+		Math.round(.75 * buttons[i].blendWhiteness) + ")";
+		ctx.fillRect(buttons[i].x - buttons[i].width/2 + 2, buttons[i].y - buttons[i].height/2 + 2, buttons[i].width - 4,buttons[i].height - 4);
+		
+		//set the font size and color depending on the button's attributes and state
 		ctx.font = buttons[i].fontSize + "px Arial";
 		ctx.fillStyle = "rgb(" + buttons[i].blendWhiteness + ", " + buttons[i].blendWhiteness + ", " + buttons[i].blendWhiteness + ")";
-		ctx.fillText(buttons[i].text,buttons[i].x - buttons[i].width/2, buttons[i].y + buttons[i].height/2);
+		
+		//draw the button label (add slight position offset to account for line spacing)
+		ctx.fillText(buttons[i].text,buttons[i].x - buttons[i].width/2 + 1, buttons[i].y + buttons[i].height/2 - 5);
 	}
 }
 
