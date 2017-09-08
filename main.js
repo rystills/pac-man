@@ -238,6 +238,28 @@ function drawGhosts() {
 			botY = cornerY + 5;
 			drawTriangle(leftX,topY,rightX,topY,leftX + (rightX-leftX)/2,botY);
 		}
+		
+		//calculate position of and draw eyes
+		context.closePath();
+		var yPos = g.y-3;
+		var xPos = g.x;
+		var xSpacing = 4;
+		var xOff = g.direction % 2 ? 0 : 2*Math.sign(g.direction-1);
+		var yOff = g.direction % 2 ? 2*Math.sign(g.direction-2) : 0;
+		//eyeballs
+		context.fillStyle = "#FFFFFF";
+		context.beginPath();
+		context.arc(xPos - xOff - xSpacing,yPos + yOff,3,0,2*Math.PI,false);
+		context.arc(xPos - xOff + xSpacing,yPos + yOff,3,0,2*Math.PI,false);
+		context.fill();
+		context.closePath();
+		//pupils
+		context.beginPath();
+		context.fillStyle = "#0000FF";
+		//offset values are applied more strongly to the pupils to simulate looking in a direction
+		context.arc(xPos - xOff * 1.5 - xSpacing,yPos + yOff * 1.5,1.5,0,2*Math.PI,false);
+		context.arc(xPos - xOff * 1.5 + xSpacing,yPos + yOff * 1.5,1.5,0,2*Math.PI,false);
+		context.fill();
 	}
 }
 
