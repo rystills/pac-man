@@ -3,13 +3,51 @@
  */
 function setupKeyListeners() {
 	keyStates = [];
-
 	//add keydown and keyup events for all keys
 	document.body.addEventListener("keydown", function (e) {
 		keyStates[String.fromCharCode(e.keyCode)] = true;
 	});
 	document.body.addEventListener("keyup", function (e) {
 		keyStates[String.fromCharCode(e.keyCode)] = false;
+	});
+	
+	//keep track of when enter is held as enter is tethered to a special restart function
+	holdingEnter = false;
+	
+	//mouse event listeners
+	mouseDownLeft = false;
+	mouseDownRight = false;
+	document.body.addEventListener("mousemove", function (e) {
+		var canvases = [canvas,HUDLeft,HUDRight];
+		var curMousePos = getMouseDocument(e);
+		
+		//store the relative mouse position for each canvas
+		for (var i = 0; i < canvases.length; ++i) {
+			var rect = canvases[i].getBoundingClientRect();
+			canvases[i].mousePos = curMousePos;
+			canvases[i].mousePos.x -= rect.left + window.pageXOffset;
+			canvases[i].mousePos.y -= rect.top + window.pageYOffset;
+		}
+	});
+	document.body.addEventListener("mousedown", function (e) {
+		if (e.button == 0) {
+			//left click press detected
+			mouseDownLeft = true;
+		}
+		else if (e.button == 2) {
+			//right click press detected
+			mouseDownRight = true;
+		}
+	});
+	document.body.addEventListener("mouseup", function (e) {
+		if (e.button == 0) {
+			//left click release detected
+			mouseDownLeft = false;
+		}
+		else if (e.button == 2) {
+			//right click release detected
+			mouseDownRight = false;
+		}
 	});
 }
 
@@ -18,7 +56,7 @@ function setupKeyListeners() {
  */
 function loadAssets() {	
 	//global list of script assets and current script number
-	scriptFiles = ["levels.js","Player.js","Ghost.js","Pellet.js","Button.js"];
+	scriptFiles = ["Button.js","levels.js","Player.js","Ghost.js","Pellet.js"];
 	scriptNum = 0;
 	
 	//global list of script contents
@@ -112,7 +150,11 @@ function update() {
 	
 	//allow restarting at any time
 	if (keyStates[String.fromCharCode(13)]) {
+		holdingEnter = true;
+	}
+	else if (holdingEnter && !keyStates[String.fromCharCode(13)]) {
 		restartGame();
+		holdingEnter = false;
 	}
 	
 	//update player first
@@ -271,7 +313,7 @@ function checkDimScreen() {
 	    textWidth = context.measureText(startInstructions).width;
 	    //height is roughly equivalent to the text size
 	    textHeight = 46;
-		context.fillText(startInstructions,canvas.width/2 - textWidth/2,canvas.height/2 - textHeight/2);
+		context.fillText(startInstructions,canvas.width/2 - textWidth/2,canvas.height/2 + textHeight/2);
 	}
 }
 
@@ -415,6 +457,18 @@ function createPellets() {
 function collisionCheck(a,b) {
 	return (Math.abs(a.x - b.x) * 2 < (a.width + b.width)) &&
     (Math.abs(a.y - b.y) * 2 < (a.height + b.height));
+}
+
+/**
+ * check for a collision between a point and a rect
+ * @param px: the x coordinate of our point
+ * @param py: the y coordinate of our point
+ * @param obj: the object whose rect we check for contained point
+ * @returns whether the point (px,py) is contained in obj's rect (true) or not (false)
+ */
+function pointInRect(px,py,obj) {
+	return (px > obj.x - obj.width/2 && px < obj.x + obj.width/2
+	&& py > obj.y - obj.height/2 && py < obj.y + obj.height/2); 
 }
 
 /**
