@@ -11,22 +11,18 @@ function setupKeyListeners() {
 		keyStates[String.fromCharCode(e.keyCode)] = false;
 	});
 	
-	//keep track of when enter is held as enter is tethered to a special restart function
-	holdingEnter = false;
-	
 	//mouse event listeners
 	mouseDownLeft = false;
 	mouseDownRight = false;
+	canvas.mousePos = {x:0,y:0};
+	HUDLeft.mousePos = {x:0,y:0};
+	HUDRight.mousePos = {x:0,y:0};
+	
 	document.body.addEventListener("mousemove", function (e) {
 		var canvases = [canvas,HUDLeft,HUDRight];
-		var curMousePos = getMouseDocument(e);
-		
 		//store the relative mouse position for each canvas
 		for (var i = 0; i < canvases.length; ++i) {
-			var rect = canvases[i].getBoundingClientRect();
-			canvases[i].mousePos = curMousePos;
-			canvases[i].mousePos.x -= rect.left + window.pageXOffset;
-			canvases[i].mousePos.y -= rect.top + window.pageYOffset;
+			canvases[i].mousePos = getMouseDocument(e,canvases[i]);
 		}
 	});
 	document.body.addEventListener("mousedown", function (e) {
@@ -66,6 +62,17 @@ function loadAssets() {
 	object = null;
 	
 	loadAsset(scriptFiles,0);
+}
+
+/**
+ * get the position of the mouse in the document
+ * @param evt: the currently processing event
+ * @param cnv: the canvas to check mouse position against
+ * @returns an object containing the x,y coordinates of the mouse
+ */
+function getMouseDocument(evt,cnv) {
+	 var rect = cnv.getBoundingClientRect();
+	 return {x: evt.clientX - rect.left, y: evt.clientY - rect.top};	
 }
 
 /**
@@ -148,15 +155,6 @@ function update() {
 	//update the deltaTime
 	updateTime();
 	
-	//allow restarting at any time
-	if (keyStates[String.fromCharCode(13)]) {
-		holdingEnter = true;
-	}
-	else if (holdingEnter && !keyStates[String.fromCharCode(13)]) {
-		restartGame();
-		holdingEnter = false;
-	}
-	
 	//update player first
 	if (gameActive) {
 		player.update();	
@@ -171,6 +169,9 @@ function update() {
 	if (pellets.length == 0) {
 		restartGame(false);
 	}
+	
+	//update GUI elements
+	restartButton.update();
 	
 	//once all updates are out of the way, render the frame
 	render();
@@ -502,6 +503,9 @@ function startGame() {
 	player = new Player();
 	createPellets();
 	createGhosts();
+	
+	//instantiuate GUI objects
+	restartButton = new Button(50,600,HUDLeft,restartGame,true);
 	
 	//set the game to call the 'update' method on each tick
 	_intervalId = setInterval(update, 1000 / fps);

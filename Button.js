@@ -1,7 +1,7 @@
 Button.prototype.update = function() {
 	//check mouse button status
 	//check if mouse is on this button 
-	if (pointInRect(this.canvas.mousePos.x,this.canvas.mousePos.y)) {
+	if (pointInRect(this.canvas.mousePos.x,this.canvas.mousePos.y,this)) {
 		//if mouse button was just pressed on us, toggle pressed on
 		if (mouseDownLeft) {
 			this.pressed = true;
@@ -16,7 +16,7 @@ Button.prototype.update = function() {
 	}
 	
 	this.state = "neutral";
-	if (holdingEnter) {
+	if (keyStates[String.fromCharCode(13)]) {
 		this.keyboardPressed = true;
 	}
 	
@@ -28,7 +28,7 @@ Button.prototype.update = function() {
 		this.state = "hover";
 	}
 	
-	if (!(holdingEnter)) {
+	if (!(keyStates[String.fromCharCode(13)])) {
 		if (this.keyboardPressed) {
 			//run our function, optionally passing in our argument if it has been set
 			this.function(this.arg);
@@ -37,7 +37,7 @@ Button.prototype.update = function() {
 	}
 
 	//if mouse button is not held down, toggle pressed off
-	if (!(mouseDownLeft || holdingEnter)) {
+	if (!(mouseDownLeft || keyStates[String.fromCharCode(13)])) {
 		this.pressed = false;
 	}
 
@@ -51,7 +51,7 @@ Button.prototype.update = function() {
 	}
 }
 
-function Button(cnv, clickFunc,clickArg) {
+function Button(x,y,cnv, clickFunc,clickArg) {
 	//initialize state
 	this.state = "neutral";
 	//whether or not the mouse button is held on us
@@ -62,6 +62,9 @@ function Button(cnv, clickFunc,clickArg) {
 	this.blendWhiteness = 0;
 	//default per-button properties
 	this.text = "RESTART";
+	//init position
+	this.x = x;
+	this.y = y;
 	//store which canvas we belong to
 	this.canvas = cnv;
 	//what function we run when pressed
