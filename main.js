@@ -11,9 +11,11 @@ function setupKeyListeners() {
 		keyStates[String.fromCharCode(e.keyCode)] = false;
 	});
 	
-	//mouse event listeners
+	//mouse event listeners (down is triggered every frame, pressed is only triggered on the first frame)
 	mouseDownLeft = false;
+	mousePressedLeft = false;
 	mouseDownRight = false;
+	mousePressedRight = false;
 	canvas.mousePos = {x:0,y:0};
 	HUDLeft.mousePos = {x:0,y:0};
 	HUDRight.mousePos = {x:0,y:0};
@@ -29,10 +31,12 @@ function setupKeyListeners() {
 		if (e.button == 0) {
 			//left click press detected
 			mouseDownLeft = true;
+			mousePressedLeft = true;
 		}
 		else if (e.button == 2) {
 			//right click press detected
 			mouseDownRight = true;
+			mousePressedRight = true;
 		}
 	});
 	document.body.addEventListener("mouseup", function (e) {
@@ -45,6 +49,17 @@ function setupKeyListeners() {
 			mouseDownRight = false;
 		}
 	});
+}
+
+/**
+ * get the position of the mouse in the document
+ * @param evt: the currently processing event
+ * @param cnv: the canvas to check mouse position against
+ * @returns an object containing the x,y coordinates of the mouse
+ */
+function getMouseDocument(evt,cnv) {
+	 var rect = cnv.getBoundingClientRect();
+	 return {x: evt.clientX - rect.left, y: evt.clientY - rect.top};	
 }
 
 /**
@@ -62,17 +77,6 @@ function loadAssets() {
 	object = null;
 	
 	loadAsset(scriptFiles,0);
-}
-
-/**
- * get the position of the mouse in the document
- * @param evt: the currently processing event
- * @param cnv: the canvas to check mouse position against
- * @returns an object containing the x,y coordinates of the mouse
- */
-function getMouseDocument(evt,cnv) {
-	 var rect = cnv.getBoundingClientRect();
-	 return {x: evt.clientX - rect.left, y: evt.clientY - rect.top};	
 }
 
 /**
@@ -171,10 +175,16 @@ function update() {
 	}
 	
 	//update GUI elements
-	restartButton.update();
+	for (var i = 0; i < buttons.length; ++i) {
+		buttons[i].update();	
+	}
 	
 	//once all updates are out of the way, render the frame
 	render();
+	
+	//toggle off any one-frame event indicators at the end of the update tick
+	mousePressedLeft = false;
+	mousePressedRight = false;
 }
 
 /**
@@ -239,6 +249,7 @@ function drawGhosts() {
  * @param staticOrientation; optional flag to ignore player orientation and draw facing right
  */
 function drawPlayer(posX,posY,ctx,staticOrientation) {
+	//set the default state for all of the optional args
 	if (posY == null) {
 		posX = player.x;
 		posY = player.y;
@@ -325,26 +336,26 @@ function checkDimScreen() {
  * @param scr: the score value to display
  */
 function drawVerticalScore(title,cnv,scr) {
-	ctx = cnv.getContext("2d");
+	var ctx = cnv.getContext("2d");
 	//set the title font
 	ctx.font = "30px Arial";
 	
 	//draw the score
 	ctx.fillStyle = "#ffAFF8";
 	//left-pad the score with 0's 
-	scoreString = scr.toString();
+	var scoreString = scr.toString();
 	var scoreLen = scoreString.length;
 	while (++scoreLen < 6) {
 		scoreString = "0" + scoreString;
 	}
 	//draw score string in vertical slices
-	scoreStringA = title;
+	var scoreStringA = title;
     var textWidth = ctx.measureText(scoreStringA).width;
     //height is roughly equivalent to the text size
     var textHeight = 30;
 	ctx.fillText(scoreStringA,cnv.width/2 - textWidth/2, textHeight*2);
 	
-	scoreStringB = "SCORE"
+	var scoreStringB = "SCORE"
     textWidth = ctx.measureText(scoreStringB).width;
     //height is roughly equivalent to the text size
 	ctx.fillText(scoreStringB,cnv.width/2 - textWidth/2, textHeight*3);
@@ -353,6 +364,18 @@ function drawVerticalScore(title,cnv,scr) {
 	ctx.fillStyle = "#FFFFFF";
 	for (var i = 0; i < 5; ++i) {
 		ctx.fillText(scoreString[i],cnv.width/2 - textWidth/2,textHeight * (5+i));
+	}
+}
+
+/**
+ * render all buttons to their respective canvases
+ */
+function drawButtons() {
+	for (var i = 0; i < buttons.length; ++i) {
+		var ctx = buttons[i].canvas.getContext("2d");
+		ctx.font = buttons[i].fontSize + "px Arial";
+		ctx.fillStyle = "rgb(" + buttons[i].blendWhiteness + ", " + buttons[i].blendWhiteness + ", " + buttons[i].blendWhiteness + ")";
+		ctx.fillText(buttons[i].text,buttons[i].x - buttons[i].width/2, buttons[i].y + buttons[i].height/2);
 	}
 }
 
@@ -375,6 +398,7 @@ function render() {
 	drawVerticalScore("GAME",HUDLeft,score);
 	drawVerticalScore("HIGH",HUDRight,bestScore);
 	drawLives();
+	drawButtons();
 	
 	//dim the screen if the game is not active
 	checkDimScreen();
@@ -505,7 +529,7 @@ function startGame() {
 	createGhosts();
 	
 	//instantiuate GUI objects
-	restartButton = new Button(50,600,HUDLeft,restartGame,true);
+	buttons = [new Button(65,600,HUDLeft,"RESTART",24,restartGame,true)];
 	
 	//set the game to call the 'update' method on each tick
 	_intervalId = setInterval(update, 1000 / fps);

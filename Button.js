@@ -1,9 +1,10 @@
 Button.prototype.update = function() {
 	//check mouse button status
 	//check if mouse is on this button 
-	if (pointInRect(this.canvas.mousePos.x,this.canvas.mousePos.y,this)) {
+	var mousing = pointInRect(this.canvas.mousePos.x,this.canvas.mousePos.y,this);
+	if (mousing) {
 		//if mouse button was just pressed on us, toggle pressed on
-		if (mouseDownLeft) {
+		if (mousePressedLeft) {
 			this.pressed = true;
 		}
 		
@@ -21,10 +22,10 @@ Button.prototype.update = function() {
 	}
 	
 	//set state based off of pressed
-	if (this.keyboardPressed || (this.pressed && pointInRect(this.canvas.mousePos.x,this.canvas.mousePos.y,this))) {
+	if (this.keyboardPressed || (this.pressed && mousing)) {
 		this.state = "press";
 	}
-	else {
+	else if (mousing) {
 		this.state = "hover";
 	}
 	
@@ -51,7 +52,7 @@ Button.prototype.update = function() {
 	}
 }
 
-function Button(x,y,cnv, clickFunc,clickArg) {
+function Button(x,y,cnv, text, fontSize, clickFunc,clickArg) {
 	//initialize state
 	this.state = "neutral";
 	//whether or not the mouse button is held on us
@@ -60,8 +61,10 @@ function Button(x,y,cnv, clickFunc,clickArg) {
 	this.keyboardPressed = false;
 	//how brightly to blend our image (state dependent)
 	this.blendWhiteness = 0;
-	//default per-button properties
-	this.text = "RESTART";
+	//button label
+	this.text = text;
+	//button size
+	this.fontSize = fontSize;
 	//init position
 	this.x = x;
 	this.y = y;
@@ -71,4 +74,10 @@ function Button(x,y,cnv, clickFunc,clickArg) {
 	this.function = clickFunc;
 	//what argument we pass into our click function
 	this.arg = clickArg;
+	
+	//init dimensions using canvas and fontSize
+	var context = this.canvas.getContext("2d");
+	context.font = this.fontSize + "px Arial";
+    this.width = context.measureText(this.text).width;
+    this.height = this.fontSize;
 }
