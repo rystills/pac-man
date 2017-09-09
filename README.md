@@ -2,7 +2,7 @@
 JavaScript remake of pac-man  
   
 Controls:  
--Arrow keys or WASD to move pac-man
+-Arrow keys or WASD to move pac-man  
 -Enter key (or click restart button) to start/restart the game  
   
 Play here: http://rystills.github.io/pac-man/  

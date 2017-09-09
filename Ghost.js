@@ -34,18 +34,45 @@ Ghost.prototype.moveRemainingDistance = function() {
 /**
  * move the ghost forward
  */
-Ghost.prototype.move = function(distance) {
+Ghost.prototype.move = function(distance,direction) {
 	if (distance == null) {
 		distance = this.speed * deltaTime ;
 	}
+	if (direction == null) {
+		direction = this.direction;
+	}
 	//move the player based on their current direction
-	if (!(this.direction % 2)) {
+	if (!(direction % 2)) {
 		//horizontal movement
-		this.x -= Math.sign(this.direction-1) * distance;
+		this.x -= Math.sign(direction-1) * distance;
 	}
 	else {
 		//vertical movement
-		this.y += Math.sign(this.direction - 2) * distance;
+		this.y += Math.sign(direction - 2) * distance;
+	}
+}
+
+/**
+ * resolve collisions with other ghosts by moving out and changing direction
+ */
+Ghost.prototype.handleGhostCollisions = function() {
+	for (var i = 0; i < ghosts.length; ++i) {
+		var other = ghosts[i];
+		//skip over ourselves when checking ghosts
+		if (other == this) {
+			continue;
+		}
+		if (collisionCheck(this,other)) {
+			//flip our direction and move back out of the collision 1 unit at a time
+			this.direction += (this.direction > 1 ? -2 : 2);
+			while (collisionCheck(this,other)) {
+				this.move(1,this.direction);
+			}
+			//if the other ghost's direction is the same as our flipped dir, flip theirs too
+			if (other.direction == this.direction) {
+				other.direction += (other.direction > 1 ? -2 : 2);
+			}
+		}
 	}
 }
 
@@ -117,7 +144,9 @@ Ghost.prototype.checkChangeDirection = function() {
  * update the ghost
  */
 Ghost.prototype.update = function() {
-	this.move();	
+	this.move();
+	this.handleGhostCollisions();
+	
 	//check if we are at an intersection, and if so, attempt to choose a new direction
 	if (grid[this.gridY][this.gridX] == 3) {
 		//update the grid x and y immediately for use in calculations
