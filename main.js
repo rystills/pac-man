@@ -196,8 +196,21 @@ function drawGrid() {
 	for (var i = 0; i < grid.length; ++i) {
 		for (var r = 0; r < grid[i].length; ++r) {
 			//draw walls (use 1 pixel vertical overlap to account for HTML canvas rounding issues)
-			if (grid[i][r] == 0) {
-				context.fillRect(r*gridWidth,i*gridHeight-1,gridWidth,gridHeight+2);
+			if (grid[i][r] == 1 || grid[i][r] == 3) {
+				if (i == 0 || grid[i-1][r] == 0) {
+					context.fillRect(r*gridWidth,i*gridHeight - 1,gridWidth,2);
+				}
+				if (i == grid.length-1 || grid[i+1][r] == 0) {
+					context.fillRect(r*gridWidth,(i+1)*gridHeight - 1,gridWidth,2);
+				}
+			}
+			if (grid[i][r] == 2 || grid[i][r] == 3) {
+				if (r == 0 || grid[i][r-1] == 0) {
+					context.fillRect(r*gridWidth - 1,i*gridHeight,2,gridHeight);
+				}
+				if (r == grid[i].length-1 || grid[i][r+1] == 0) {
+					context.fillRect((r+1)*gridWidth - 1,i*gridHeight,2,gridHeight);
+				}
 			}
 		}
 	}
