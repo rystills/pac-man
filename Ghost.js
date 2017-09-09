@@ -1,4 +1,51 @@
 /**
+ * if we are overlapping a wall, move back out of if
+ */
+Ghost.prototype.stayWithinWalls = function() {
+	//update the grid value and grid x and y immediately for use in calculations
+	this.gridX = Math.floor(this.x / gridWidth);
+	this.gridY = Math.floor(this.y / gridHeight);
+	gridVal = grid[this.gridY][this.gridX];
+	
+	if (!(this.direction%2)) {
+		//going horizontally
+		if ((this.direction == 0 && (this.x - this.gridX*gridWidth >= gridWidth/2)) ||
+		(this.direction == 2 && (this.x - this.gridX*gridWidth <= gridWidth/2))) {
+			this.checkMoveOutsideWall();
+		}
+	}
+	else {
+		//going vertically
+		if ((this.direction == 3 && (this.y - this.gridY*gridHeight >= gridHeight/2)) ||
+		(this.direction == 1 && (this.y - this.gridY*gridHeight <= gridHeight/2))) {
+			this.checkMoveOutsideWall();
+		}
+	}
+}
+
+/**
+ * sub-method of stayWithinWalls; check for a wall collision
+ */
+Ghost.prototype.checkMoveOutsideWall = function() {
+	gridY2 = this.gridY;
+	gridX2 = this.gridX;
+	if (!(this.direction % 2)) {
+		gridX2 -= Math.sign(this.direction-1);
+	}
+	else {
+		gridY2 += Math.sign(this.direction-2);
+	}
+	if (grid[gridY2][gridX2] == 0) {
+		//we are moving into a wall, so back out to the center of this grid space and flip our direction
+		this.x = this.gridX*gridWidth + gridWidth/2;
+		this.y = this.gridY*gridHeight + gridHeight/2;
+		
+		//flip our direction now that we've exited the wall
+		this.direction += (this.direction > 1 ? -2 : 2);
+	}
+}
+
+/**
  * update the ghost's grid and previous locations to match our new final x,y pos
  */
 Ghost.prototype.updatePositionalVars = function() {
@@ -165,6 +212,9 @@ Ghost.prototype.update = function() {
 	}
 	if (this.changingDirection) {
 		this.checkChangeDirection();
+	}
+	else {
+		this.stayWithinWalls();
 	}
 	
 	this.moveRemainingDistance();
