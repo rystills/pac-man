@@ -1,3 +1,6 @@
+/**
+ * update the button's state, activating it in the event of a mouse click or keyboard press
+ */
 Button.prototype.update = function() {
 	//check mouse button status
 	//check if mouse is on this button 
@@ -52,6 +55,16 @@ Button.prototype.update = function() {
 	}
 }
 
+/**
+ * simple class representing a button which can be pressed via a mouse click or a keyboard key
+ * @param x: the x position of the button's center
+ * @param y: the y position of the button's center
+ * @param cnv: the canvas to which the button belongs
+ * @param text: the text string that should be drawn inside the button
+ * @param fontSize: the font size of the button text
+ * @param clickFunc: the function to be called when the button is triggered
+ * @param clickArg: the argument to be passed in to the button's trigger function
+ */
 function Button(x,y,cnv, text, fontSize, clickFunc,clickArg) {
 	//initialize state
 	this.state = "neutral";

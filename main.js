@@ -76,7 +76,7 @@ function loadAssets() {
 	//quick and dirty way to store local text files as JS objects
 	object = null;
 	
-	loadAsset(scriptFiles,0);
+	loadAsset();
 }
 
 /**
@@ -95,7 +95,6 @@ function loadAsset() {
 	
 	//load the desired script file
 	var elem = document.createElement('script');
-	elem.type = 'text/javascript';
 	elem.onload = loadAsset;
 	elem.src = scriptFiles[scriptNum];
 	
